@@ -1,6 +1,13 @@
 // Íconos de trazo propios + logo + timbre. Todo SVG inline.
 
 const P = {
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7M8 11h5"/>',
+  access: '<circle cx="12" cy="4.5" r="2"/><path d="M5 8.5 12 10l7-1.5M12 10v5l-3 6M12 15l3 6"/>',
+  textsize: '<path d="M3 19 8 6l5 13M4.8 14.5h6.4M14 19l3.5-9 3.5 9M15.2 16h4.6"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.2a5 5 0 0 1 6 4.8"/>',
+  coins: '<ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v5c0 1.7 2.7 3 6 3s6-1.3 6-3V7"/><path d="M9 15v2c0 1.7 2.7 3 6 3s6-1.3 6-3v-5c0-1.7-2.7-3-6-3"/>',
   back: '<path d="m15 18-6-6 6-6"/>',
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
   share: '<path d="M12 3v13M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>',
@@ -55,7 +62,7 @@ export function logo(size = 36) {
 }
 
 export function wordmark(size = 22, color = 'currentColor') {
-  return `<span class="wordmark" style="font-family:var(--f-sans);font-weight:800;font-size:${size}px;letter-spacing:-.045em;color:${color};line-height:1">una<span style="color:var(--brand)">mano</span></span>`;
+  return `<span class="wordmark" style="font-family:var(--f-sans);font-weight:800;font-size:${size}px;letter-spacing:-.03em;color:${color};line-height:1">una<span style="color:#0E7A5F">mano</span></span>`;
 }
 
 // Timbre de goma con borde irregular. Texto en arco arriba y abajo.

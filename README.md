@@ -1,8 +1,8 @@
 # unamano — rifas que dan una mano
 
-**Compra un número. Paga una operación.**
+**Cada número suma.**
 
-unamano es una plataforma de rifas solidarias con causa verificada. Una organización con personalidad jurídica (junta de vecinos, centro de padres, club, sindicato) organiza la rifa a favor de una persona que necesita un tratamiento. unamano verifica el caso, opera la venta, le paga directo a la clínica y, si no se llega a la meta, devuelve el 100% a cada comprador.
+unamano es una plataforma de rifas solidarias con impacto social verificable. Organizaciones de base con personalidad jurídica (juntas de vecinos, centros de padres, clubes, sindicatos) postulan causas de su comunidad: salud, educación, vivienda, emergencias, inclusión y proyectos comunitarios. unamano verifica cada causa, opera la venta, paga directo al proveedor y publica el resultado. Si no se llega a la meta, devuelve el 100% a cada comprador.
 
 Este repositorio es el **MVP funcional**: una app web instalable (PWA) en iPhone y Android, con su landing page y un panel de administración. No requiere compilación ni servidor propio.
 
@@ -16,8 +16,13 @@ Este repositorio es el **MVP funcional**: una app web instalable (PWA) en iPhone
 | App | `/app/` | Compradores y postulantes |
 | Panel de administración | `/admin/` | Equipo de verificación (PIN demo: `1234`) |
 
+### App: inicio de impacto
+- Al abrir, la app muestra el impacto acumulado: cifras principales, recaudación mes a mes, uso por tipo de causa, reparto de cada $1.000, recaudación por región, causas cumplidas y actividad reciente
+- Las cifras históricas son de demostración y están marcadas como tales (`HISTORY` y `STORIES` en `data.js`)
+
 ### App: compradores
 - Explorar causas activas, con búsqueda y filtros por tipo
+- Compra en dos pasos: elegir cuántos números (asignados al azar) o elegir números específicos
 - Ficha de cada causa: historia, meta, avance, cuenta regresiva, premio, el «sello» con cada verificación y el reparto de la plata
 - Selector de números con rangos, compra al azar y bandeja de selección
 - Pago (simulado) con Webpay, Mercado Pago o transferencia
@@ -37,6 +42,12 @@ Este repositorio es el **MVP funcional**: una app web instalable (PWA) en iPhone
 - Aprobar y publicar, o rechazar con motivo
 - Herramientas de demo: simular ventas, cerrar la venta y ejecutar el sorteo
 - Si no se llegó a la meta, el sistema devuelve todas las compras automáticamente
+
+### Accesibilidad
+- Tipografía Atkinson Hyperlegible (Braille Institute), pensada para personas con baja visión
+- Botón «Aa» para agrandar la letra en tres tamaños; toda la interfaz escala
+- Botones grandes, una acción principal por pantalla y textos en lenguaje simple
+- Colores de los gráficos validados para daltonismo y siempre acompañados de nombre
 
 ### Sorteo auditable (commit-reveal)
 1. Al publicar la rifa se genera una semilla secreta y se publica su huella: `sha256(semilla)`.
@@ -96,12 +107,13 @@ assets/css/app.css         Estilos de la app y del panel
 assets/css/landing.css     Estilos de la landing
 assets/js/data.js          Capa de datos (hoy localStorage) y reglas de negocio
 assets/js/crypto.js        SHA-256, semilla y selección del ganador
-assets/js/media.js         Fotos de las causas y sello de verificación
+assets/js/media.js         Fotos de las causas, etiquetas y sello
+assets/js/charts.js        Gráficos de impacto (SVG, sin librerías)
 assets/js/icons.js         Íconos, logo y timbre
 assets/js/app.js           Router y vistas
 assets/js/landing.js       Interacciones de la landing
 assets/js/pwa.js           Instalación y registro del service worker
-assets/fonts/              Plus Jakarta Sans y Fraunces (SIL Open Font License)
+assets/fonts/              Atkinson Hyperlegible Next y Mono (SIL Open Font License)
 assets/icons/              Íconos de la app
 ```
 
