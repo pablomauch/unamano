@@ -1,0 +1,138 @@
+# unamano — rifas que dan una mano
+
+**Compra un número. Paga una operación.**
+
+unamano es una plataforma de rifas solidarias con causa verificada. Una organización con personalidad jurídica (junta de vecinos, centro de padres, club, sindicato) organiza la rifa a favor de una persona que necesita un tratamiento. unamano verifica el caso, opera la venta, le paga directo a la clínica y, si no se llega a la meta, devuelve el 100% a cada comprador.
+
+Este repositorio es el **MVP funcional**: una app web instalable (PWA) en iPhone y Android, con su landing page y un panel de administración. No requiere compilación ni servidor propio.
+
+---
+
+## Qué incluye
+
+| Parte | Ruta | Para quién |
+|---|---|---|
+| Landing page | `/` | Público general: explica el modelo y lleva a la app |
+| App | `/app/` | Compradores y postulantes |
+| Panel de administración | `/admin/` | Equipo de verificación (PIN demo: `1234`) |
+
+### App: compradores
+- Explorar causas activas, con búsqueda y filtros por tipo
+- Ficha de cada causa: historia, meta, avance, cuenta regresiva, premio, el «sello» con cada verificación y el reparto de la plata
+- Selector de números con rangos, compra al azar y bandeja de selección
+- Pago (simulado) con Webpay, Mercado Pago o transferencia
+- Tickets en «Mis números», con estado: participando, ganador, causa cumplida o devuelto
+- Resultado público del sorteo, con verificación criptográfica desde el teléfono
+
+### App: postulantes
+- Espacio propio con requisitos, documentos necesarios, costos y proceso
+- Formulario en 5 pasos, con afiche generado en vivo (foto opcional en duotono)
+- Cálculo automático de meta y cantidad de números según presupuesto, precio y premio
+- Seguimiento del estado de la postulación paso a paso
+- Kit de difusión por WhatsApp cuando la rifa se publica
+
+### Panel de administración
+- Cola de casos por verificar, activos y cerrados, con KPIs
+- Checklist de 6 verificaciones con interruptores, puntaje de confianza y alertas automáticas
+- Aprobar y publicar, o rechazar con motivo
+- Herramientas de demo: simular ventas, cerrar la venta y ejecutar el sorteo
+- Si no se llegó a la meta, el sistema devuelve todas las compras automáticamente
+
+### Sorteo auditable (commit-reveal)
+1. Al publicar la rifa se genera una semilla secreta y se publica su huella: `sha256(semilla)`.
+2. Al sortear se revela la semilla.
+3. Ganador = `vendidos_ordenados[ sha256("semilla:idCausa:cantidad") mod cantidad ]`.
+
+Cualquiera puede recalcularlo con el botón «Recalcular en mi teléfono».
+
+---
+
+## Probarlo localmente
+
+```bash
+# desde la carpeta del proyecto
+python3 -m http.server 8080
+# o: npx serve .
+```
+
+Abre `http://localhost:8080`. El service worker funciona en `localhost` y en HTTPS.
+
+## Publicar en GitHub Pages (gratis)
+
+1. Crea un repositorio nuevo en GitHub, por ejemplo `unamano`.
+2. Sube el contenido de esta carpeta:
+   ```bash
+   git init
+   git add .
+   git commit -m "unamano MVP"
+   git branch -M main
+   git remote add origin https://github.com/TU_USUARIO/unamano.git
+   git push -u origin main
+   ```
+3. En GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch**, rama `main`, carpeta `/ (root)`.
+4. En uno o dos minutos queda en `https://TU_USUARIO.github.io/unamano/`.
+
+Todas las rutas son relativas, así que funciona tanto en un subdirectorio de GitHub Pages como en un dominio propio.
+
+## Instalarla como app
+
+- **iPhone:** abre la URL en Safari → botón Compartir → «Agregar a pantalla de inicio».
+- **Android:** abre la URL en Chrome → «Instalar app» (o el botón «Instalar» dentro de la app).
+
+Funciona sin conexión después de la primera visita.
+
+---
+
+## Estructura
+
+```
+index.html                 Landing
+app/index.html             App (compradores y postulantes)
+admin/index.html           Panel de administración (misma base, modo escritorio)
+manifest.webmanifest       Manifiesto PWA
+sw.js                      Service worker (offline)
+assets/css/base.css        Sistema visual: tokens, tipografías, tickets, timbres
+assets/css/app.css         Estilos de la app y del panel
+assets/css/landing.css     Estilos de la landing
+assets/js/data.js          Capa de datos (hoy localStorage) y reglas de negocio
+assets/js/crypto.js        SHA-256, semilla y selección del ganador
+assets/js/poster.js        Afiches generativos por causa
+assets/js/icons.js         Íconos, logo y timbre
+assets/js/app.js           Router y vistas
+assets/js/landing.js       Interacciones de la landing
+assets/js/pwa.js           Instalación y registro del service worker
+assets/fonts/              Fraunces y Archivo (SIL Open Font License)
+assets/icons/              Íconos de la app
+```
+
+## Modo demo
+
+- Las causas son de ejemplo y los pagos son simulados.
+- Los datos viven en el `localStorage` del dispositivo: cada teléfono tiene su propia demo.
+- «Más → Reiniciar la demo» vuelve todo a cero.
+
+---
+
+## Camino a producción
+
+`assets/js/data.js` es la única puerta a los datos. Para pasar a producción se reemplazan sus funciones por llamadas a un backend, sin tocar las vistas.
+
+1. **Backend y base de datos.** Por ejemplo Supabase (Postgres, autenticación, almacenamiento y funciones). Tablas: `causas`, `verificaciones`, `compras`, `numeros` (con restricción única por causa y número), `organizaciones`, `pagos_clinica`, `auditoria`.
+2. **Pagos.** Flow, Mercado Pago o Transbank (Webpay Plus) con webhooks de confirmación y reserva temporal de números mientras se paga. Los fondos se mantienen en una cuenta de la entidad organizadora o de un proveedor de pagos regulado, nunca en una cuenta personal, y deben soportar reembolsos automáticos.
+3. **Sorteo.** La semilla se genera y guarda en el servidor; el sorteo lo ejecuta una función programada a la hora indicada.
+4. **Verificación.** Validación de identidad con un proveedor de KYC; consulta al Registro Nacional de Prestadores Individuales de Salud; llamada a la clínica registrada en la auditoría; documentos cifrados en almacenamiento privado.
+5. **Notificaciones.** Correo y WhatsApp con los números comprados, recordatorio del sorteo y resultado.
+6. **Cuentas.** Inicio de sesión por correo para compradores y organizaciones; roles para el equipo de verificación (reemplaza el PIN de demo).
+
+### Antes de lanzar: revisión legal
+
+Este MVP asume que cada rifa la organiza una organización con personalidad jurídica, con fines benéficos y a favor de un tercero, en línea con la Ley 20.851. Antes de operar con dinero real hay que validar con un abogado:
+
+- si el esquema online de la plataforma calza con la Ley 20.851 o requiere autorización según la Ley 10.262 y el Decreto 955
+- la custodia de fondos de terceros y su relación con la regulación de la CMF
+- el tratamiento tributario de las rifas y los premios
+- el tratamiento de datos de salud, que son datos sensibles, bajo la ley de protección de datos personales vigente
+
+---
+
+Hecho en Chile.

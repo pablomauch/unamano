@@ -1,0 +1,23 @@
+{
+  "name": "unamano — rifas que dan una mano",
+  "short_name": "unamano",
+  "description": "Rifas solidarias con causa verificada. Pago directo a la clínica y devolución garantizada.",
+  "lang": "es-CL",
+  "start_url": "./app/",
+  "scope": "./",
+  "id": "./app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2F3BFF",
+  "theme_color": "#2F3BFF",
+  "categories": ["lifestyle", "social", "finance"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Mis números", "url": "./app/#/mis-numeros", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Postular una causa", "url": "./app/#/postular", "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
