@@ -488,3 +488,27 @@ body.admin-mode .subbar { padding-left: 1.75rem; padding-right: 1.75rem; }
   body.admin-mode .buybar .btn { flex: 0 0 auto !important; min-width: 14rem; }
   body.admin-mode #pin { max-width: 28rem; margin: 0 auto; }
 }
+
+/* ---------- Intro ---------- */
+.intro { position: fixed; inset: 0; z-index: 300; background: var(--ink); color: #fff; overflow: hidden; cursor: pointer; transition: opacity .7s var(--ease); }
+.intro.out { opacity: 0; pointer-events: none; }
+.intro .scene { position: absolute; inset: 0; opacity: 0; transition: opacity .9s var(--ease); background: radial-gradient(120% 80% at 30% 20%, #1D3557 0%, var(--ink) 70%); }
+.intro .scene.on { opacity: 1; }
+.intro .scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); }
+.intro .scene.on img { animation: kenburns 3.2s ease-out forwards; }
+@keyframes kenburns { to { transform: scale(1); } }
+.intro .scene::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,30,51,.25) 0%, rgba(15,30,51,.1) 35%, rgba(15,30,51,.85) 100%); }
+.intro .scene-t { position: absolute; z-index: 1; left: 1.5rem; right: 1.5rem; bottom: calc(3.5rem + var(--safe-b)); margin: 0 auto; max-width: 34rem; font-size: clamp(2rem, 8.5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -.025em; text-wrap: balance; opacity: 0; transform: translateY(1.2rem); }
+.intro .scene.on .scene-t { animation: rise .8s var(--ease) .25s forwards; }
+@keyframes rise { to { opacity: 1; transform: none; } }
+.intro .mark { background: var(--sun); color: var(--ink); padding: 0 .14em; border-radius: .18em; }
+.intro .final { display: grid; place-items: center; text-align: center; background: var(--ink); }
+.intro .final::after { display: none; }
+.intro .final-in { padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1.1rem; opacity: 0; transform: scale(.94); }
+.intro .final.on .final-in { animation: rise .9s var(--spring) .2s forwards; }
+.intro .final h1 { margin: .5rem 0 0; font-size: clamp(2.6rem, 11vw, 4.2rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.02; }
+.intro .final p { margin: 0; font-size: 1.1875rem; color: #C9D3E0; max-width: 22ch; }
+.intro-bars { position: absolute; z-index: 5; top: calc(.75rem + var(--safe-t)); left: 1rem; right: 5.5rem; display: flex; gap: .3rem; }
+.intro-bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.3); overflow: hidden; }
+.intro-bars b { display: block; height: 100%; width: 0; background: #fff; }
+.intro-skip { position: absolute; z-index: 6; top: calc(.3rem + var(--safe-t)); right: .75rem; min-height: 2.75rem; padding: 0 1rem; border-radius: 999px; border: 0; background: rgba(255,255,255,.16); color: #fff; font-weight: 700; font-size: .9375rem; backdrop-filter: blur(8px); }

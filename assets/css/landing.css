@@ -165,7 +165,7 @@
 
 /* Final */
 .final { background: var(--ink); color: #fff; text-align: center; padding: clamp(5rem, 10vw, 8rem) 0; }
-.final .mark { color: var(--ink); }
+.final .mark { background: var(--sun); color: var(--ink); padding: 0 .14em; border-radius: .18em; }
 .final p { font-size: 1.25rem; color: #C9D3E0; margin: 1.25rem 0 0; }
 .final .ctas { justify-content: center; }
 .btn-ghost-w { --bg: transparent; --fg: #fff; --bd: rgba(255,255,255,.4); }

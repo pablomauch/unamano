@@ -1064,6 +1064,61 @@ function notFound() {
   view.innerHTML = `${topbar()}<div class="empty" style="margin-top:3rem"><b>No encontramos esa página</b><a class="btn btn-l" href="#/">Volver al inicio</a></div>`;
 }
 
+
+// =====================================================================
+// INTRO: transición al abrir la app (una vez por sesión)
+// =====================================================================
+const INTRO = [
+  { photo: 'photo-1768244016879-a0f41e01281c', pre: 'Cuando una comunidad', key: 'se organiza', post: '…' },
+  { photo: 'photo-1473649085228-583485e6e4d7', pre: '…un curso entero', key: 'aprende', post: 'con lo que necesita,' },
+  { photo: 'photo-1664441342319-ac6034edead5', pre: 'una familia', key: 'vuelve', post: 'a su casa,' },
+  { photo: 'photo-1758686253896-e6c76b6f7aa1', pre: 'y alguien vuelve a caminar', key: 'sin dolor', post: '.' },
+];
+function playIntro() {
+  return new Promise(resolve => {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const SCENE = reduce ? 0 : 1700, FINAL = reduce ? 1600 : 2500;
+    const el = document.createElement('div');
+    el.className = 'intro'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Bienvenida a unamano');
+    el.innerHTML = `
+      <div class="intro-bars" aria-hidden="true">${INTRO.map(() => '<i><b></b></i>').join('')}<i><b></b></i></div>
+      <button class="intro-skip" type="button">Saltar</button>
+      ${INTRO.map(s => `<div class="scene" aria-hidden="true">
+        <img src="https://images.unsplash.com/${s.photo}?auto=format&fit=crop&w=1000&q=70" alt="" onerror="this.remove()">
+        <p class="scene-t">${s.pre} <span class="mark">${s.key}</span>${s.post.startsWith(',') || s.post === '.' || s.post === '…' ? '' : ' '}${s.post}</p>
+      </div>`).join('')}
+      <div class="scene final">
+        <div class="final-in">${logo(72)}
+          <h1>Cada número <span class="mark">suma</span>.</h1>
+          <p>Rifas solidarias que cambian la vida de las personas.</p>
+        </div>
+      </div>`;
+    document.body.append(el);
+    const scenes = $$('.scene', el), bars = $$('.intro-bars b', el);
+    let i = -1, timer, done = false;
+    const finish = () => {
+      if (done) return; done = true; clearTimeout(timer);
+      el.classList.add('out');
+      sessionStorage.setItem('unamano:intro', '1');
+      setTimeout(() => { el.remove(); resolve(); }, 700);
+    };
+    const next = () => {
+      i++;
+      if (i >= scenes.length) return finish();
+      scenes.forEach((s, k) => s.classList.toggle('on', k === i));
+      bars.forEach((b, k) => { b.style.transition = 'none'; b.style.width = k < i ? '100%' : '0%'; });
+      const dur = i === scenes.length - 1 ? FINAL : SCENE;
+      requestAnimationFrame(() => requestAnimationFrame(() => { bars[i].style.transition = `width ${dur}ms linear`; bars[i].style.width = '100%'; }));
+      timer = setTimeout(next, dur);
+    };
+    if (reduce) i = scenes.length - 2;
+    $('.intro-skip', el).addEventListener('click', e => { e.stopPropagation(); finish(); });
+    el.addEventListener('click', () => { clearTimeout(timer); next(); });
+    document.addEventListener('keydown', function k(e) { if (e.key === 'Escape') { document.removeEventListener('keydown', k); finish(); } });
+    next();
+  });
+}
+
 // ---------- router ----------
 const routes = [
   [/^#?\/?$/, viewImpact, 'home'],
@@ -1108,4 +1163,8 @@ function route() {
 db.load();
 bindTooltips(document);
 window.addEventListener('hashchange', route);
-route();
+const atHome = !location.hash || location.hash === '#/' || location.hash === '#';
+if (!ADMIN && atHome && !sessionStorage.getItem('unamano:intro') && !new URLSearchParams(location.search).has('sinintro')) {
+  route();
+  playIntro();
+} else route();
