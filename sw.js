@@ -1,5 +1,5 @@
 // Service worker de unamano: funciona offline y carga al instante.
-const VERSION = 'unamano-v4';
+const VERSION = 'unamano-v5';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './app/', './app/index.html', './admin/', './admin/index.html',

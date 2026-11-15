@@ -1069,30 +1069,51 @@ function notFound() {
 // INTRO: transición al abrir la app (una vez por sesión)
 // =====================================================================
 const INTRO = [
-  { photo: 'photo-1768244016879-a0f41e01281c', pre: 'Cuando una comunidad', key: 'se organiza', post: '…' },
-  { photo: 'photo-1473649085228-583485e6e4d7', pre: '…un curso entero', key: 'aprende', post: 'con lo que necesita,' },
-  { photo: 'photo-1664441342319-ac6034edead5', pre: 'una familia', key: 'vuelve', post: 'a su casa,' },
-  { photo: 'photo-1758686253896-e6c76b6f7aa1', pre: 'y alguien vuelve a caminar', key: 'sin dolor', post: '.' },
+  { photo: 'photo-1768244016879-a0f41e01281c', html: 'Cuando una comunidad <span class="mark">se organiza</span>…' },
+  { photo: 'photo-1473649085228-583485e6e4d7', html: '…un curso entero <span class="mark">aprende</span> con lo que necesita,' },
+  { photo: 'photo-1664441342319-ac6034edead5', html: 'una familia <span class="mark">vuelve</span> a su casa,' },
+  { photo: 'photo-1758686253896-e6c76b6f7aa1', html: 'y alguien vuelve a caminar <span class="mark">sin dolor</span>.' },
+  { type: 'ticket', dur: 5200 },
+  { type: 'dots', dur: 5600 },
+  { type: 'final', dur: 4200 },
 ];
+const SCENE_MS = 4200;
+
+function introScene(s) {
+  if (s.type === 'ticket') return `<div class="scene g-scene" aria-hidden="true">
+      <div class="g-in">
+        <div class="i-ticket"><span class="lbl">Tu número</span><span class="n mono">0847</span><span class="p">$2.000</span></div>
+        <p class="g-t">Tu número puede ser parte de…</p>
+        <ul class="i-uses">
+          <li style="--d:.9s"><i style="background:#2a78d6">${icon('steth', 20, 2.2)}</i>una cirugía</li>
+          <li style="--d:1.6s"><i style="background:#eb6834">${icon('book', 20, 2.2)}</i>una sala temperada</li>
+          <li style="--d:2.3s"><i style="background:#1baf7a">${icon('home', 20, 2.2)}</i>un techo nuevo</li>
+        </ul>
+      </div></div>`;
+  if (s.type === 'dots') return `<div class="scene g-scene" aria-hidden="true">
+      <div class="g-in">
+        <div class="i-dots">${Array.from({ length: 100 }, (_, k) => `<i style="--d:${(k * 0.03).toFixed(2)}s"></i>`).join('')}</div>
+        <b class="i-count num" data-to="2000000">$0</b>
+        <p class="g-t">Mil personas, un número cada una.<br><span class="mark">Juntas hacen posible lo que nadie lograría solo.</span></p>
+      </div></div>`;
+  if (s.type === 'final') return `<div class="scene final"><div class="final-in">${logo(72)}
+      <h1>Cada número <span class="mark">suma</span>.</h1>
+      <p>Rifas solidarias que cambian la vida de las personas.</p></div></div>`;
+  return `<div class="scene" aria-hidden="true">
+      <img src="https://images.unsplash.com/${s.photo}?auto=format&fit=crop&w=1000&q=70" alt="" onerror="this.remove()">
+      <p class="scene-t">${s.html}</p></div>`;
+}
+
 function playIntro() {
   return new Promise(resolve => {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const SCENE = reduce ? 0 : 1700, FINAL = reduce ? 1600 : 2500;
     const el = document.createElement('div');
     el.className = 'intro'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'Bienvenida a unamano');
     el.innerHTML = `
-      <div class="intro-bars" aria-hidden="true">${INTRO.map(() => '<i><b></b></i>').join('')}<i><b></b></i></div>
+      <div class="intro-bars" aria-hidden="true">${INTRO.map(() => '<i><b></b></i>').join('')}</div>
       <button class="intro-skip" type="button">Saltar</button>
-      ${INTRO.map(s => `<div class="scene" aria-hidden="true">
-        <img src="https://images.unsplash.com/${s.photo}?auto=format&fit=crop&w=1000&q=70" alt="" onerror="this.remove()">
-        <p class="scene-t">${s.pre} <span class="mark">${s.key}</span>${s.post.startsWith(',') || s.post === '.' || s.post === '…' ? '' : ' '}${s.post}</p>
-      </div>`).join('')}
-      <div class="scene final">
-        <div class="final-in">${logo(72)}
-          <h1>Cada número <span class="mark">suma</span>.</h1>
-          <p>Rifas solidarias que cambian la vida de las personas.</p>
-        </div>
-      </div>`;
+      ${INTRO.map(introScene).join('')}
+      <span class="intro-hint" aria-hidden="true">Toca para avanzar</span>`;
     document.body.append(el);
     const scenes = $$('.scene', el), bars = $$('.intro-bars b', el);
     let i = -1, timer, done = false;
@@ -1100,15 +1121,17 @@ function playIntro() {
       if (done) return; done = true; clearTimeout(timer);
       el.classList.add('out');
       sessionStorage.setItem('unamano:intro', '1');
-      setTimeout(() => { el.remove(); resolve(); }, 700);
+      setTimeout(() => { el.remove(); resolve(); }, 800);
     };
     const next = () => {
       i++;
       if (i >= scenes.length) return finish();
-      scenes.forEach((s, k) => s.classList.toggle('on', k === i));
+      scenes.forEach((sc, k) => sc.classList.toggle('on', k === i));
       bars.forEach((b, k) => { b.style.transition = 'none'; b.style.width = k < i ? '100%' : '0%'; });
-      const dur = i === scenes.length - 1 ? FINAL : SCENE;
+      const dur = reduce ? 3000 : (INTRO[i].dur || SCENE_MS);
       requestAnimationFrame(() => requestAnimationFrame(() => { bars[i].style.transition = `width ${dur}ms linear`; bars[i].style.width = '100%'; }));
+      const cnt = scenes[i].querySelector('[data-to]');
+      if (cnt) setTimeout(() => countUp(cnt, +cnt.dataset.to, v => clp(v), 3000), 300);
       timer = setTimeout(next, dur);
     };
     if (reduce) i = scenes.length - 2;

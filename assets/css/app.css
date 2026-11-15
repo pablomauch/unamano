@@ -495,7 +495,7 @@ body.admin-mode .subbar { padding-left: 1.75rem; padding-right: 1.75rem; }
 .intro .scene { position: absolute; inset: 0; opacity: 0; transition: opacity .9s var(--ease); background: radial-gradient(120% 80% at 30% 20%, #1D3557 0%, var(--ink) 70%); }
 .intro .scene.on { opacity: 1; }
 .intro .scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); }
-.intro .scene.on img { animation: kenburns 3.2s ease-out forwards; }
+.intro .scene.on img { animation: kenburns 5s ease-out forwards; }
 @keyframes kenburns { to { transform: scale(1); } }
 .intro .scene::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,30,51,.25) 0%, rgba(15,30,51,.1) 35%, rgba(15,30,51,.85) 100%); }
 .intro .scene-t { position: absolute; z-index: 1; left: 1.5rem; right: 1.5rem; bottom: calc(3.5rem + var(--safe-b)); margin: 0 auto; max-width: 34rem; font-size: clamp(2rem, 8.5vw, 3.4rem); font-weight: 800; line-height: 1.1; letter-spacing: -.025em; text-wrap: balance; opacity: 0; transform: translateY(1.2rem); }
@@ -512,3 +512,29 @@ body.admin-mode .subbar { padding-left: 1.75rem; padding-right: 1.75rem; }
 .intro-bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.3); overflow: hidden; }
 .intro-bars b { display: block; height: 100%; width: 0; background: #fff; }
 .intro-skip { position: absolute; z-index: 6; top: calc(.3rem + var(--safe-t)); right: .75rem; min-height: 2.75rem; padding: 0 1rem; border-radius: 999px; border: 0; background: rgba(255,255,255,.16); color: #fff; font-weight: 700; font-size: .9375rem; backdrop-filter: blur(8px); }
+
+.intro .scene.g-scene { display: grid; place-items: center; background: radial-gradient(120% 80% at 50% 0%, #1D3557 0%, var(--ink) 70%); }
+.intro .g-scene::after { display: none; }
+.g-in { width: min(26rem, calc(100% - 3rem)); display: flex; flex-direction: column; align-items: center; gap: 1.4rem; text-align: center; }
+.g-t { margin: 0; font-size: clamp(1.6rem, 6.6vw, 2.3rem); font-weight: 800; line-height: 1.18; letter-spacing: -.02em; opacity: 0; }
+.g-scene.on .g-t { animation: rise .8s var(--ease) .5s forwards; }
+.i-ticket { --notch: 1rem; display: flex; align-items: center; gap: 1.1rem; padding: 1.1rem 1.6rem; background: var(--sun); color: var(--ink); border-radius: 1.2rem; transform: rotate(-4deg) scale(.6); opacity: 0;
+  -webkit-mask: radial-gradient(circle var(--notch) at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle var(--notch) at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle var(--notch) at 0 50%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle var(--notch) at 100% 50%, #0000 97%, #000) right / 51% 100% no-repeat; }
+.g-scene.on .i-ticket { animation: tpop .8s var(--spring) .1s forwards; }
+@keyframes tpop { to { transform: rotate(-4deg) scale(1); opacity: 1; } }
+.i-ticket .lbl { font-size: .8125rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; writing-mode: vertical-rl; transform: rotate(180deg); }
+.i-ticket .n { font-size: 3.2rem; font-weight: 800; line-height: 1; }
+.i-ticket .p { font-weight: 800; font-size: 1.1rem; padding-left: 1rem; border-left: 2px dashed rgba(15,30,51,.35); }
+.i-uses { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; width: 100%; }
+.i-uses li { display: flex; align-items: center; gap: .8rem; padding: .75rem 1rem; border-radius: 1rem; background: rgba(255,255,255,.08); font-size: 1.25rem; font-weight: 700; text-align: left; opacity: 0; transform: translateX(-1rem); }
+.g-scene.on .i-uses li { animation: rise .6s var(--ease) var(--d) forwards; }
+.i-uses i { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: grid; place-items: center; color: #fff; flex-shrink: 0; }
+.i-dots { display: grid; grid-template-columns: repeat(10, 1fr); gap: .45rem; width: min(17rem, 80%); }
+.i-dots i { aspect-ratio: 1; border-radius: 50%; background: rgba(255,255,255,.14); }
+.g-scene.on .i-dots i { animation: lit .35s var(--ease) var(--d) forwards; }
+@keyframes lit { to { background: var(--sun); transform: scale(1.08); } }
+.i-count { font-size: clamp(2.4rem, 11vw, 3.4rem); font-weight: 800; color: var(--sun); line-height: 1; }
+.intro .g-t .mark { font-size: .78em; line-height: 1.5; }
+.intro-hint { position: absolute; z-index: 5; left: 0; right: 0; bottom: calc(1rem + var(--safe-b)); text-align: center; font-size: .8125rem; color: rgba(255,255,255,.6); font-weight: 700; }
+.intro .scene-t { bottom: calc(4.25rem + var(--safe-b)); }
