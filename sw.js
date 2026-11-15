@@ -1,12 +1,12 @@
 // Service worker de unamano: funciona offline y carga al instante.
-const VERSION = 'unamano-v5';
+const VERSION = 'unamano-v6';
 const SHELL = [
   './', './index.html', './manifest.webmanifest',
   './app/', './app/index.html', './admin/', './admin/index.html',
   './assets/css/base.css', './assets/css/app.css', './assets/css/landing.css',
   './assets/js/app.js', './assets/js/landing.js', './assets/js/data.js', './assets/js/media.js',
   './assets/js/icons.js', './assets/js/crypto.js', './assets/js/pwa.js',
-  './assets/fonts/atkinson.woff2', './assets/fonts/atkinson-italic.woff2', './assets/fonts/atkinson-mono.woff2', './assets/js/charts.js',
+  './assets/fonts/atkinson.woff2', './assets/fonts/atkinson-italic.woff2', './assets/fonts/atkinson-mono.woff2', './assets/js/charts.js', './assets/js/share.js', './assets/vendor/qrcode.mjs',
   './assets/icons/icon-192.png', './assets/icons/icon-512.png', './assets/icons/apple-touch-icon.png',
 ];
 

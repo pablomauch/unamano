@@ -4,7 +4,7 @@
 
 import { sha256, randomSeed, pickWinner, prng } from './crypto.js';
 
-const KEY = 'unamano:v3';
+const KEY = 'unamano:v4';
 const DAY = 86_400_000;
 export const OPS_PCT = 8; // % para verificación y operación de la plataforma
 
@@ -52,7 +52,7 @@ const U = 'https://images.unsplash.com/';
 function causeSeed(t) {
   const base = [
     {
-      id: 'rosa-cadera', status: 'live', category: 'salud', palette: 0, region: 'Metropolitana',
+      id: 'rosa-cadera', quote: 'Quiero volver a caminar sin dolor y salir a la feria con mis nietas.', need: 'Necesito operarme la cadera. En el sistema público me dieron hora para 2028.', when: 'y Rosa se opera en diciembre', thanks: 'Gracias por ayudarme a volver a caminar. No sabe lo que significa para mí.', status: 'live', category: 'salud', palette: 0, region: 'Metropolitana',
       photo: U + 'photo-1758686253896-e6c76b6f7aa1',
       title: 'Que Rosa vuelva a caminar sin dolor',
       treatment: 'Cirugía de reemplazo de cadera',
@@ -65,7 +65,7 @@ function causeSeed(t) {
       drawIn: 6, soldSeed: 1560,
     },
     {
-      id: 'maitenes-escuela', status: 'live', category: 'educacion', palette: 1, region: 'Metropolitana',
+      id: 'maitenes-escuela', quote: 'Somos 28 y tenemos tres computadores. Las tareas las hacemos por turnos.', need: 'Queremos un computador por estudiante, para la sala y para la casa.', when: 'y el 4° básico estrena computadores en marzo', thanks: '¡Gracias! Desde el 4° básico de Los Maitenes, con mucho cariño.', status: 'live', category: 'educacion', palette: 1, region: 'Metropolitana',
       photo: U + 'photo-1473649085228-583485e6e4d7',
       title: 'Un computador por estudiante en la Escuela Los Maitenes',
       treatment: 'Equipamiento digital para el 4° básico',
@@ -78,7 +78,7 @@ function causeSeed(t) {
       drawIn: 1.2, soldSeed: 2700,
     },
     {
-      id: 'soto-incendio', status: 'live', category: 'emergencia', palette: 3, region: 'Valparaíso',
+      id: 'soto-incendio', quote: 'El incendio se llevó la casa. Los vecinos ya levantaron la estructura con sus manos.', need: 'Nos faltan los materiales para cerrar, techar y volver a vivir ahí.', when: 'y la familia Soto vuelve a su casa antes del invierno', thanks: 'Gracias por ayudarnos a volver a casa. Nunca lo vamos a olvidar.', status: 'live', category: 'emergencia', palette: 3, region: 'Valparaíso',
       photo: U + 'photo-1664441342319-ac6034edead5',
       title: 'Volver a casa después del incendio',
       treatment: 'Materiales para reconstruir la casa de la familia Soto',
@@ -91,7 +91,7 @@ function causeSeed(t) {
       drawIn: 3, soldSeed: 1650,
     },
     {
-      id: 'josefa-coclear', status: 'live', category: 'inclusion', palette: 2, region: 'La Araucanía',
+      id: 'josefa-coclear', quote: 'Josefa nació sin poder oír. Queremos que escuche nuestra voz.', need: 'Con el implante y un año de terapia puede aprender a hablar a tiempo para el colegio.', when: 'y Josefa recibe su implante este verano', thanks: 'Gracias por regalarle a Josefa la posibilidad de escucharnos.', status: 'live', category: 'inclusion', palette: 2, region: 'La Araucanía',
       photo: U + 'flagged/photo-1553178298-251410cb176f',
       title: 'Que Josefa pueda escuchar a su familia',
       treatment: 'Implante coclear y un año de rehabilitación auditiva',
@@ -104,7 +104,7 @@ function causeSeed(t) {
       drawIn: 9, soldSeed: 1870,
     },
     {
-      id: 'cancha-union', status: 'live', category: 'comunidad', palette: 3, region: 'Biobío',
+      id: 'cancha-union', quote: 'En invierno oscurece a las seis y la cancha queda vacía.', need: 'Con luz, las niñas y niños del barrio pueden seguir entrenando de forma segura.', when: 'y la cancha se ilumina antes de junio', thanks: 'Gracias por devolverle la cancha al barrio.', status: 'live', category: 'comunidad', palette: 3, region: 'Biobío',
       photo: U + 'photo-1744565473172-a3c64b1e1bbb',
       title: 'Luz para la cancha del barrio',
       treatment: 'Iluminación LED para la cancha comunitaria',
@@ -117,7 +117,7 @@ function causeSeed(t) {
       drawIn: 14, soldSeed: 820,
     },
     {
-      id: 'luis-rodilla', status: 'live', category: 'salud', palette: 0, region: 'Valparaíso',
+      id: 'luis-rodilla', quote: 'Vivo en un cerro y hoy no puedo subir a mi casa sin parar tres veces.', need: 'Necesito una prótesis de rodilla para volver a mi vida de siempre.', when: 'y don Luis se opera en enero', thanks: 'Gracias, de corazón. Nos vemos en el próximo campeonato de rayuela.', status: 'live', category: 'salud', palette: 0, region: 'Valparaíso',
       photo: U + 'photo-1658314755819-72c38b317e61',
       title: 'Que don Luis vuelva a subir su cerro',
       treatment: 'Prótesis de rodilla',
@@ -173,6 +173,8 @@ function causeSeed(t) {
   ];
 
   return base.map(c => {
+    // Cada número vale $1.000: así cualquier persona puede aportar con poco
+    if (c.price !== 1000) { c.soldSeed = Math.round((c.soldSeed || 0) * c.price / 1000); c.price = 1000; }
     const plan = computePlan({ budget: c.provider.budget, price: c.price, prizeMode: c.prizeMode, prizePct: c.prizePct });
     const seed = randomSeed();
     const checks = c.checks || Object.fromEntries(CHECKS.map(k => [k.key, true]));
@@ -220,7 +222,7 @@ const soldCache = new Map();
 
 function fresh() {
   const t = Date.now();
-  const s = { v: 3, createdAt: t, causes: causeSeed(t), purchases: [], profile: {}, adminOk: false, prefs: {} };
+  const s = { v: 4, createdAt: t, causes: causeSeed(t), purchases: [], profile: {}, adminOk: false, prefs: {} };
   state = s;
   const benja = s.causes.find(c => c.id === 'benja-silla');
   finalizeDraw(benja, t - 5 * DAY);
@@ -230,7 +232,7 @@ function fresh() {
 export function load() {
   if (state) return state;
   try { const raw = localStorage.getItem(KEY); state = raw ? JSON.parse(raw) : null; } catch { state = null; }
-  if (!state || state.v !== 3) { state = fresh(); save(); }
+  if (!state || state.v !== 4) { state = fresh(); save(); }
   return state;
 }
 
@@ -280,6 +282,12 @@ export function timeLeft(ms) {
   if (d >= 2) return `${d} días`;
   if (d === 1) return `1 día y ${h} h`;
   return `${h} h ${String(m).padStart(2, '0')} min`;
+}
+
+// La causa destacada: la más cercana a cumplirse entre las activas
+export function featured() {
+  const live = causes({ status: 'live' });
+  return live.sort((a, b) => stats(b).pct - stats(a).pct)[0] || null;
 }
 
 export const purchases = () => load().purchases.slice().sort((a, b) => b.createdAt - a.createdAt);

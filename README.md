@@ -16,6 +16,14 @@ Este repositorio es el **MVP funcional**: una app web instalable (PWA) en iPhone
 | App | `/app/` | Compradores y postulantes |
 | Panel de administración | `/admin/` | Equipo de verificación (PIN demo: `1234`) |
 
+### Entrada desde redes sociales (lo principal)
+- Cada causa tiene su link y su código QR: `app/#/h/<id-de-la-causa>`. El influencer o la organización lo pone en TikTok o Instagram.
+- Quien entra ve solo la historia de esa persona, como una historia de Instagram: quién es, qué necesita, cuánto falta y por qué confiar.
+- Aportar toma dos toques: elegir $1.000, $2.000 o $5.000 y pagar. Cada $1.000 es un número del sorteo.
+- El agradecimiento muestra el mensaje de la persona, cómo avanzó la meta con tu aporte y un botón para compartir una imagen vertical con QR en tus historias.
+- Recién al final aparece «Conocer otras causas» (segunda instancia).
+- En el panel y en la postulación publicada hay un kit para redes: QR, link e imagen para historias.
+
 ### App: inicio de impacto
 - Al abrir, la app muestra el impacto acumulado: cifras principales, recaudación mes a mes, uso por tipo de causa, reparto de cada $1.000, recaudación por región, causas cumplidas y actividad reciente
 - Las cifras históricas son de demostración y están marcadas como tales (`HISTORY` y `STORIES` en `data.js`)

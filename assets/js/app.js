@@ -6,6 +6,7 @@ import { icon, logo, wordmark } from './icons.js';
 import { monthBars, donut, hbars, splitBar, bindTooltips, countUp } from './charts.js';
 import { sha256, pickWinner } from './crypto.js';
 import * as pwa from './pwa.js';
+import { causeUrl, qrSvg, shareStory, whatsappUrl } from './share.js';
 
 pwa.registerSW('../sw.js');
 
@@ -78,7 +79,7 @@ const progress = (pct, color) => `<div class="bar" role="progressbar" aria-value
 
 function topbar(title = '') {
   return `<header class="topbar">
-    <a class="brand" href="#/" aria-label="unamano, inicio">${logo(34)}${wordmark(23)}</a>
+    <a class="brand" href="#/impacto" aria-label="unamano, inicio">${logo(34)}${wordmark(23)}</a>
     ${title ? `<span class="topbar-t">${title}</span>` : ''}
     <div class="topbar-r">
       <button class="icon-btn" data-size-toggle aria-label="Cambiar tamaño de letra">${icon('textsize', 22)}</button>
@@ -127,6 +128,7 @@ function openMore() {
     </div>
     <ul class="menu">
       ${pwa.canInstall() ? `<li><button data-install><span class="mi">${icon('download')}</span><span>Instalar la app<small>Queda en tu pantalla de inicio</small></span></button></li>` : ''}
+      <li><button data-intro><span class="mi">${icon('spark')}</span><span>Ver la introducción<small>Lo que logra una comunidad organizada</small></span></button></li>
       <li><a href="#/postular" data-go><span class="mi">${icon('hand')}</span><span>Mis postulaciones<small>Revisa en qué va tu causa</small></span></a></li>
       <li><a href="../" data-go><span class="mi">${icon('heart')}</span><span>Qué es unamano<small>Cómo funciona y preguntas frecuentes</small></span></a></li>
       <li><a href="../admin/" data-go><span class="mi">${icon('shield')}</span><span>Panel de administración<small>Para el equipo · PIN de prueba 1234</small></span></a></li>
@@ -134,6 +136,7 @@ function openMore() {
     </ul>`, {
     onOpen: (s, close) => {
       $$('[data-sz]', s).forEach(b => b.addEventListener('click', () => { db.setPref('size', b.dataset.sz); applySize(); $$('[data-sz]', s).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
+      $('[data-intro]', s).addEventListener('click', () => { close(); playIntro(); });
       $('[data-reset]', s).addEventListener('click', () => { db.reset(); cart.clear(); close(); toast('Demostración reiniciada'); route(); });
       $$('[data-go]', s).forEach(a => a.addEventListener('click', () => setTimeout(close, 0)));
     },
@@ -289,7 +292,7 @@ function causeCard(c) {
   const s = db.stats(c);
   const hot = s.ms < 2 * 864e5;
   const k = CATEGORIES[c.category];
-  return `<a class="ccard" href="#/causa/${c.id}">
+  return `<a class="ccard" href="#/h/${c.id}">
     <div class="ccard-ph">${photo(c, { w: 800 })}
       <div class="ccard-top">${catTag(c.category)}<span class="time-pill ${hot ? 'hot' : ''}">${icon('clock', 15, 2.4)} ${hot ? 'Cierra en ' : ''}${db.timeLeft(s.ms)}</span></div></div>
     <div class="ccard-b">
@@ -361,7 +364,7 @@ function viewCause(id) {
       <div class="buybar">
         ${c.status === 'live' ? `
           <div class="pr"><b class="num">${clp(c.price)}</b><span>cada número</span></div>
-          <a class="btn btn-l" href="#/causa/${c.id}/comprar">${icon('ticket', 22)} Comprar números</a>` : `
+          <a class="btn btn-l" href="#/h/${c.id}">${icon('heart', 22)} Aportar</a>` : `
           <div class="pr"><b>${c.status === 'drawn' ? 'Meta cumplida' : 'Devuelta'}</b><span>${c.status === 'drawn' ? 'Ya se hizo el sorteo' : 'No se llegó a la meta'}</span></div>
           <a class="btn btn-l" href="#/sorteo/${c.id}">Ver resultado ${icon('arrow', 20)}</a>`}
       </div>
@@ -371,6 +374,150 @@ function viewCause(id) {
     const t = setInterval(() => { const el = $('[data-countdown]'); if (el) el.textContent = db.timeLeft(c.drawAt - Date.now()); }, 30_000);
     onLeave(() => clearInterval(t));
   }
+}
+
+
+// =====================================================================
+// HISTORIA: la puerta de entrada desde TikTok, Instagram o un QR.
+// Una persona, su historia y el botón para aportar. Nada más.
+// =====================================================================
+const AMOUNTS = [1000, 2000, 5000];
+function viewStory(id) {
+  const c = db.cause(id);
+  if (!c) return notFound();
+  if (c.status !== 'live') return go('#/sorteo/' + c.id);
+  document.body.classList.add('no-tabbar', 'story-mode');
+  onLeave(() => document.body.classList.remove('story-mode'));
+  const st = db.stats(c);
+  const k = CATEGORIES[c.category];
+  const first = c.beneficiary.first;
+  const person = !!c.beneficiary.age;
+  const left = Math.ceil(st.missing / 1000);
+  let amount = 2000, slide = 0, timer, paused = false;
+  const SLIDES = 4, DUR = 6500;
+  view.innerHTML = `
+    <section class="sv" style="--k:${k.color}">
+      <div class="sv-media">${photo(c, { w: 1000 })}</div>
+      <div class="sv-shade"></div>
+      <div class="sv-bars" aria-hidden="true">${Array.from({ length: SLIDES }, () => '<i><b></b></i>').join('')}</div>
+      <header class="sv-top">
+        <div class="sv-org"><span class="sv-logo">${logo(30)}</span><div><b>${esc(c.organizer.name)}</b><small>${icon('shield', 13, 2.6)} Verificada por unamano</small></div></div>
+        <button class="sv-ic" data-share aria-label="Compartir">${icon('share', 22)}</button>
+      </header>
+      <div class="sv-slides" aria-live="polite">
+        <article class="sv-s">
+          <p class="sv-k">${person ? 'Hola, soy' : 'Somos'}</p>
+          <h1 class="sv-name">${esc(first)}</h1>
+          <p class="sv-quote">«${esc(c.quote || c.story)}»</p>
+          <p class="sv-meta">${person ? `${c.beneficiary.age} años · ` : ''}${esc(c.beneficiary.comuna)}</p>
+        </article>
+        <article class="sv-s">
+          <p class="sv-k">Lo que ${person ? 'necesito' : 'necesitamos'}</p>
+          <p class="sv-big">${esc(c.need || c.treatment)}</p>
+          <p class="sv-meta">Lo organiza ${esc(c.organizer.name)}.</p>
+        </article>
+        <article class="sv-s">
+          <p class="sv-k">Cuánto falta</p>
+          <p class="sv-amt num">${clp(st.missing)}</p>
+          <div class="sv-bar"><i style="width:${Math.max(3, st.pct)}%"></i></div>
+          <p class="sv-big2">Con <span class="mark">${left.toLocaleString('es-CL')} aportes de $1.000</span> ${esc(c.when || 'se cumple la meta')}.</p>
+        </article>
+        <article class="sv-s">
+          <p class="sv-k">Puedes confiar</p>
+          <ul class="sv-trust">
+            <li>${icon('shield', 22, 2.2)}<span>Revisamos su historia, sus documentos y el presupuesto.</span></li>
+            <li>${icon('clinic', 22, 2.2)}<span>El dinero va directo a ${esc(c.provider.name)}, no a una persona.</span></li>
+            <li>${icon('refresh', 22, 2.2)}<span>Si no se llega a la meta, te devolvemos todo.</span></li>
+          </ul>
+        </article>
+      </div>
+      <button class="sv-tap prev" aria-label="Anterior"></button>
+      <button class="sv-tap next" aria-label="Siguiente"></button>
+      <div class="sv-give">
+        <div class="sv-progress"><div class="sv-bar sm"><i style="width:${Math.max(3, st.pct)}%"></i></div><span><b class="num">${Math.floor(st.pct)}%</b> de la meta · quedan ${db.timeLeft(st.ms)}</span></div>
+        <div class="sv-amts" role="group" aria-label="Monto del aporte">${AMOUNTS.map(a => `<button type="button" data-a="${a}" aria-pressed="${a === amount}">${clp(a)}</button>`).join('')}</div>
+        <button class="btn btn-sun btn-l btn-block" id="give">${icon('heart', 22, 2.4)} <span id="giveTxt"></span></button>
+        <p class="sv-note">Cada $1.000 es un número para el sorteo: ${esc(c.prize)}.</p>
+      </div>
+    </section>`;
+  const slides = $$('.sv-s'), bars = $$('.sv-bars b');
+  const show = n => {
+    slide = Math.max(0, Math.min(SLIDES - 1, n));
+    slides.forEach((el, i) => el.classList.toggle('on', i === slide));
+    bars.forEach((b, i) => { b.style.transition = 'none'; b.style.width = i < slide ? '100%' : '0%'; });
+    clearTimeout(timer);
+    if (slide < SLIDES - 1 && !paused) {
+      requestAnimationFrame(() => requestAnimationFrame(() => { bars[slide].style.transition = `width ${DUR}ms linear`; bars[slide].style.width = '100%'; }));
+      timer = setTimeout(() => show(slide + 1), DUR);
+    } else bars[slide].style.width = '100%';
+  };
+  const setAmt = a => { amount = a; $('#giveTxt').textContent = `Aportar ${clp(a)} a ${first}`; $$('.sv-amts button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.a === a)); };
+  setAmt(amount); show(0);
+  onLeave(() => clearTimeout(timer));
+  $('.sv-tap.next').addEventListener('click', () => show(slide + 1));
+  $('.sv-tap.prev').addEventListener('click', () => show(slide - 1));
+  $$('.sv-amts button').forEach(b => b.addEventListener('click', () => setAmt(+b.dataset.a)));
+  $('[data-share]').addEventListener('click', () => shareLink(c));
+  $('#give').addEventListener('click', () => { paused = true; clearTimeout(timer); giveSheet(c, amount, () => { paused = false; show(slide); }); });
+}
+
+function shareLink(c) {
+  const url = causeUrl(c);
+  if (navigator.share) navigator.share({ title: c.title, text: `${c.title}. Aporta desde $1.000.`, url }).catch(() => {});
+  else navigator.clipboard?.writeText(url).then(() => toast('Enlace copiado'), () => toast(url));
+}
+
+function giveSheet(c, amount, onClose) {
+  const prof = db.profile();
+  const first = c.beneficiary.first;
+  let closeFn;
+  closeFn = sheet(`
+    <div class="give-h">${photo(c, { w: 200 })}<div><span class="eyebrow">Tu aporte a ${esc(first)}</span><b class="give-amt num" id="gAmt">${clp(amount)}</b></div></div>
+    <div class="sv-amts light" role="group" aria-label="Monto">${AMOUNTS.map(a => `<button type="button" data-a="${a}" aria-pressed="${a === amount}">${clp(a)}</button>`).join('')}</div>
+    <form class="form" id="gf" novalidate style="padding:1rem 0 0">
+      <div class="row2">
+        <div class="field"><label for="gn">Tu nombre</label><input id="gn" name="name" autocomplete="given-name" required value="${esc(prof.name || '')}"></div>
+        <div class="field"><label for="ge">Tu correo</label><input id="ge" name="email" type="email" inputmode="email" autocomplete="email" required value="${esc(prof.email || '')}"></div>
+      </div>
+      <span class="lbl" style="font-weight:700">Paga con</span>
+      <div class="paygrid">
+        <button type="submit" class="paybtn" value="Webpay">${icon('lock', 20)}<b>Tarjeta</b><small>Webpay</small></button>
+        <button type="submit" class="paybtn" value="Mercado Pago">${icon('coins', 20)}<b>Mercado Pago</b><small>Tu cuenta</small></button>
+        <button type="submit" class="paybtn" value="Transferencia">${icon('clinic', 20)}<b>Banco</b><small>Transferencia</small></button>
+      </div>
+      <p class="muted" style="font-size:.875rem;margin:.25rem 0 0">Al aportar aceptas las <button type="button" class="linkish" id="gb">bases de la rifa</button>. Demostración: no se cobra dinero real.</p>
+    </form>`, {
+    onOpen: (sh, close) => {
+      const orig = close;
+      $$('.sv-amts button', sh).forEach(b => b.addEventListener('click', () => { amount = +b.dataset.a; $('#gAmt', sh).textContent = clp(amount); $$('.sv-amts button', sh).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
+      $('#gb', sh).addEventListener('click', () => toast(`Organiza ${c.organizer.name}. Sorteo el ${fmtDate(c.drawAt)}. Si no se llega a la meta, se devuelve todo.`));
+      $('#gf', sh).addEventListener('submit', e => {
+        e.preventDefault();
+        const f = e.target, method = e.submitter?.value || 'Webpay';
+        let ok = true;
+        $$('.field', f).forEach(x => { x.classList.remove('err'); $('.errmsg', x)?.remove(); });
+        const bad = (i, m) => { ok = false; const fl = i.closest('.field'); fl.classList.add('err'); fl.insertAdjacentHTML('beforeend', `<span class="errmsg">${m}</span>`); };
+        if (f.name.value.trim().length < 2) bad(f.name, 'Escribe tu nombre.');
+        if (!/^\S+@\S+\.\S+$/.test(f.email.value)) bad(f.email, 'Revisa tu correo.');
+        if (!ok) return;
+        const nums = db.randomFree(c, Math.round(amount / c.price));
+        const ov = document.createElement('div'); ov.className = 'paying'; ov.setAttribute('role', 'alert');
+        ov.innerHTML = `<div><div class="spin"></div><h2>Procesando tu aporte</h2><p>Conectando con ${esc(method)}…</p></div>`;
+        document.body.append(ov);
+        setTimeout(() => {
+          try {
+            const before = db.stats(c).pct;
+            const p = db.buy(c.id, nums, { name: f.name.value.trim(), email: f.email.value.trim(), phone: prof.phone || '' }, method);
+            sessionStorage.setItem('unamano:before', String(before));
+            ov.remove(); orig(); go('#/gracias/' + p.id);
+          } catch (err) { ov.remove(); toast(err.message, 'bad'); }
+        }, 1400);
+      });
+    },
+  });
+  const root = $('#sheet-root');
+  const obs = new MutationObserver(() => { if (!root.children.length) { obs.disconnect(); onClose?.(); } });
+  obs.observe(root, { childList: true });
 }
 
 // =====================================================================
@@ -529,26 +676,65 @@ function viewThanks(pid) {
   const p = db.purchases().find(x => x.id === pid);
   if (!p) return go('#/mis-numeros');
   const c = db.cause(p.causeId);
-  const s = db.stats(c);
+  const st = db.stats(c);
+  const before = +(sessionStorage.getItem('unamano:before') || Math.max(0, st.pct - 1));
+  sessionStorage.removeItem('unamano:before');
   document.body.classList.add('no-tabbar');
+  const first = c.beneficiary.first;
   view.innerHTML = `
-    <section class="thanks">
-      <a href="#/" class="icon-btn" aria-label="Cerrar">${icon('close')}</a>
-      <div class="big-ic">${icon('check', 48, 3)}</div>
-      <h1>Gracias, ${esc(p.buyer.name.split(' ')[0])}.</h1>
-      <p class="lead">Tu aporte de <b>${clp(p.amount)}</b> ya es parte de esta causa. Con él, la meta va en <b>${Math.floor(s.pct)}%</b>.</p>
-      ${progress(s.pct, CATEGORIES[c.category].color)}
-      <h2 class="h-s" style="margin-top:.5rem">Tus números</h2>
-      <div class="tix">
-        ${p.numbers.slice(0, 6).map((n, i) => `<div class="tix-one" style="--i:${i}"><span class="n mono">${pad(n)}</span><span class="m">Sorteo<br>${fmtDate(c.drawAt)}</span></div>`).join('')}
-        ${p.numbers.length > 6 ? `<p style="margin:0;font-weight:700">y ${p.numbers.length - 6} más en Mis números</p>` : ''}
+    <section class="ty">
+      <div class="ty-media">${photo(c, { w: 900 })}<div class="ty-shade"></div>
+        <a href="#/h/${c.id}" class="icon-btn float ty-x" aria-label="Volver a la historia">${icon('close')}</a>
+        <div class="ty-head"><div class="big-ic">${icon('heart', 40, 2.4).replace('fill="none"', 'fill="currentColor"')}</div>
+          <h1>Gracias, ${esc(p.buyer.name.split(' ')[0])}.</h1></div>
       </div>
-      <p class="muted">También te los enviamos a ${esc(p.buyer.email)}.</p>
-      <button class="btn btn-l btn-block btn-sun" data-share>${icon('share', 20)} Invitar a otras personas</button>
-      <a class="btn btn-l btn-block btn-light" href="#/mis-numeros">Ver mis números</a>
+      <div class="ty-body">
+        <figure class="ty-quote"><blockquote>«${esc(c.thanks || 'Gracias por tu aporte. Significa muchísimo.')}»</blockquote><figcaption>${esc(c.beneficiary.age ? first : c.beneficiary.name)}</figcaption></figure>
+        <div class="ty-prog">
+          <div class="ty-row"><span>Con tu aporte de <b>${clp(p.amount)}</b>, la meta va en</span><b class="num" id="tyPct">${Math.floor(before)}%</b></div>
+          <div class="bar big"><i id="tyBar" style="--p:${Math.max(3, before)}%;--c:${CATEGORIES[c.category].color}"></i></div>
+          <span class="ty-left">Faltan ${clp(st.missing)} para la meta</span>
+        </div>
+        <div class="ty-nums"><span>Tus números para el sorteo del ${fmtDate(c.drawAt)}</span><div class="nums">${p.numbers.map(n => `<span>${pad(n)}</span>`).join('')}</div></div>
+        <div class="ty-share">
+          <b>Cada persona que invitas acerca la meta</b>
+          <button class="btn btn-sun btn-l btn-block" id="tyStory">${icon('share', 20)} Compartir en mis historias</button>
+          <a class="btn btn-light btn-l btn-block" href="${whatsappUrl(c)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+        </div>
+        <a class="ty-more" href="#/causas">¿Quieres seguir ayudando? Conoce otras causas ${icon('arrow', 16)}</a>
+      </div>
     </section>`;
-  $('[data-share]').addEventListener('click', () => shareCause(c));
-  confetti($('.thanks'));
+  setTimeout(() => { $('#tyBar').style.setProperty('--p', Math.max(3, st.pct) + '%'); countUp($('#tyPct'), st.pct - before, v => Math.floor(before + v) + '%', 1100); }, 500);
+  $('#tyStory').addEventListener('click', async e => {
+    const b = e.currentTarget; b.disabled = true;
+    try { const r = await shareStory(c, st, { by: p.buyer.name.split(' ')[0] }); if (r === 'downloaded') toast('Imagen descargada. Súbela a tus historias.'); }
+    catch { toast('No pudimos crear la imagen', 'bad'); }
+    b.disabled = false;
+  });
+  confetti($('.ty'), 50);
+}
+
+// Kit para el influencer u organización: link, QR e imagen vertical
+function kitBlock(c) {
+  const url = causeUrl(c);
+  return `<div class="kit2">
+    <div class="kit2-qr">${qrSvg(url, 168)}</div>
+    <div class="kit2-b">
+      <h3>Kit para redes sociales</h3>
+      <p>Para el TikTok o Instagram del influencer o de la organización. Quien escanee el código llega directo a la historia de ${esc(c.beneficiary.first)}.</p>
+      <code class="mono">${esc(url)}</code>
+      <div class="kit2-a">
+        <button class="btn btn-s" data-kit-img>${icon('download', 18)} Imagen para historias</button>
+        <button class="btn btn-s btn-light" data-kit-copy>Copiar link</button>
+        <a class="btn btn-s btn-light" href="${url}" target="_blank" rel="noopener">Ver como visitante</a>
+      </div>
+    </div></div>`;
+}
+function bindKit(c) {
+  $('[data-kit-copy]')?.addEventListener('click', () => navigator.clipboard?.writeText(causeUrl(c)).then(() => toast('Link copiado')));
+  $('[data-kit-img]')?.addEventListener('click', async () => {
+    try { const r = await shareStory(c, db.stats(c)); if (r === 'downloaded') toast('Imagen descargada'); } catch { toast('No pudimos crear la imagen', 'bad'); }
+  });
 }
 
 function viewMine() {
@@ -793,7 +979,6 @@ function viewMyCase(id) {
   if (!c) return notFound();
   document.body.classList.add('no-tabbar');
   const firstPending = STAGES.findIndex(st => !stageDone(c, st));
-  const kit = `${c.title}\nRifa solidaria verificada en unamano. Número a ${clp(c.price)}, sorteo el ${fmtDate(c.drawAt)}.\n${new URL('#/causa/' + c.id, location.href).href}`;
   view.innerHTML = `
     ${subbar('#/postular', `Postulación #${esc(c.id.slice(-5).toUpperCase())}`, esc(c.title))}
     <div class="stack">
@@ -804,14 +989,12 @@ function viewMyCase(id) {
         const ok = stageDone(c, st), now = i === firstPending;
         return `<li><span class="tn ${ok ? 'ok' : now ? 'now' : ''}">${ok ? icon('check', 16, 3) : i + 1}</span><div><b>${st.t}</b><span>${now && c.status === 'pending' ? 'En curso. ' : ''}${st.s}</span></div></li>`;
       }).join('')}</ol>`}
-      ${c.status === 'live' ? `
-        <div class="kit"><h3>Para difundir</h3><p>Compártelo en los grupos de tu comunidad.</p><pre>${esc(kit)}</pre>
-          <div style="display:flex;gap:.6rem;flex-wrap:wrap"><a class="btn" href="https://wa.me/?text=${encodeURIComponent(kit)}" target="_blank" rel="noopener">Enviar por WhatsApp</a><button class="btn btn-light" id="cp">Copiar texto</button></div></div>
-        <a class="btn btn-l btn-block" href="#/causa/${c.id}">Ver la rifa publicada</a>` : ''}
+      ${c.status === 'live' ? `${kitBlock(c)}
+        <a class="btn btn-l btn-block" href="#/h/${c.id}">Ver la historia publicada</a>` : ''}
       ${['drawn', 'refunded'].includes(c.status) ? `<a class="btn btn-l btn-block" href="#/sorteo/${c.id}">Ver resultado</a>` : ''}
       ${c.status === 'pending' ? `<a class="btn btn-light btn-block" href="../admin/#/admin/${c.id}">${icon('shield', 18)} Ver cómo la revisa el equipo (demostración)</a>` : ''}
     </div>`;
-  $('#cp')?.addEventListener('click', () => navigator.clipboard?.writeText(kit).then(() => toast('Texto copiado')));
+  if (c.status === 'live') bindKit(c);
 }
 
 function shrink(file, max) {
@@ -934,6 +1117,7 @@ function viewAdminCase(id) {
           <p class="muted" style="margin:.25rem 0 .75rem">de ${clp(c.goal)} · ${st.sold.toLocaleString('es-CL')} números · cierra el ${fmtDateTime(c.drawAt)}</p>
           ${progress(st.pct, CATEGORIES[c.category].color)}
           <p class="hash-line">${icon('hash', 16)}<span>Huella publicada: <code class="mono">${c.seedHash}</code></span></p></div>
+        <div class="full">${kitBlock(c)}</div>
         <div class="card pad"><h3>Herramientas de demostración</h3>
           <div style="display:flex;flex-direction:column;gap:.6rem">
             <button class="btn btn-light btn-block" id="sim">${icon('users', 20)} Simular ventas (+${plural(Math.ceil(c.goal / c.price * .15), 'número', 'números')})</button>
@@ -949,6 +1133,7 @@ function viewAdminCase(id) {
         <button class="btn btn-l btn-ok" id="ok" style="flex:2" ${allOk && !c.flags?.length ? '' : 'disabled'}>${icon('shield', 20)} Aprobar y publicar</button>
         ${allOk && !c.flags?.length ? '' : `<span class="buy-note">${c.flags?.length ? 'Revisa la alerta y completa' : 'Completa'} las ${CHECKS.length} verificaciones para publicar.</span>`}
       </div>` : ''}`;
+    if (c.status === 'live') bindKit(c);
     $$('[data-check]').forEach(b => b.addEventListener('click', () => { db.setCheck(c.id, b.dataset.check, b.getAttribute('aria-checked') !== 'true'); viewAdminCase(id); }));
     $('[data-unflag]')?.addEventListener('click', () => { db.clearFlags(c.id); viewAdminCase(id); });
     $('#ok')?.addEventListener('click', () => { try { db.approve(c.id); toast('Causa publicada con el sello de verificación'); viewAdminCase(id); } catch (e) { toast(e.message, 'bad'); } });
@@ -1144,7 +1329,9 @@ function playIntro() {
 
 // ---------- router ----------
 const routes = [
-  [/^#?\/?$/, viewImpact, 'home'],
+  [/^#?\/?$/, () => { const f = db.featured(); f ? viewStory(f.id) : viewImpact(); }, ''],
+  [/^#\/impacto$/, viewImpact, 'home'],
+  [/^#\/h\/([\w-]+)$/, viewStory, ''],
   [/^#\/causas$/, viewCauses, 'causes'],
   [/^#\/causa\/([\w-]+)$/, viewCause, 'causes'],
   [/^#\/causa\/([\w-]+)\/comprar$/, viewBuy, 'causes'],
@@ -1165,7 +1352,7 @@ function route() {
   cleanup = [];
   $('#sheet-root').innerHTML = '';
   let h = location.hash || HOME;
-  if (ADMIN && !/^#\/(admin|sorteo|causa\/[\w-]+$)/.test(h)) { history.replaceState(null, '', '#/admin'); h = '#/admin'; }
+  if (ADMIN && !/^#\/(admin|sorteo|h\/|causa\/[\w-]+$)/.test(h)) { history.replaceState(null, '', '#/admin'); h = '#/admin'; }
   for (const [re, fn, tab] of routes) {
     const m = h.match(re);
     if (!m) continue;
@@ -1186,8 +1373,4 @@ function route() {
 db.load();
 bindTooltips(document);
 window.addEventListener('hashchange', route);
-const atHome = !location.hash || location.hash === '#/' || location.hash === '#';
-if (!ADMIN && atHome && !sessionStorage.getItem('unamano:intro') && !new URLSearchParams(location.search).has('sinintro')) {
-  route();
-  playIntro();
-} else route();
+route();

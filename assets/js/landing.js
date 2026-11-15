@@ -80,7 +80,7 @@ const live = db.causes({ status: 'live' }).sort((a, b) => a.drawAt - b.drawAt).s
 $('#cgrid').innerHTML = live.map((c, i) => {
   const s = db.stats(c);
   const k = CATEGORIES[c.category];
-  return `<a class="cc" href="app/#/causa/${c.id}" data-reveal style="--dl:${i * .08}s">
+  return `<a class="cc" href="app/#/h/${c.id}" data-reveal style="--dl:${i * .08}s">
     <div style="position:relative">${photo(c, { w: 700 })}<div class="cc-top">${catTag(c.category)}<span class="cc-time">${db.timeLeft(s.ms)}</span></div></div>
     <div class="cc-b"><span class="cc-t">${esc(c.title)}</span><span class="cc-o">${esc(c.organizer.name)} · ${esc(c.beneficiary.comuna)}</span>
       <div class="bar"><i style="--p:${Math.max(3, s.pct)}%;--c:${k.color}"></i></div>
