@@ -1,8 +1,8 @@
 // unamano — app (SPA con router por hash)
 import * as db from './data.js';
 import { CATEGORIES, CHECKS, ORG_TYPES, clp, pad, computePlan, OPS_PCT } from './data.js';
-import { poster, pal } from './poster.js';
-import { icon, logo, wordmark, stamp } from './icons.js';
+import { photo, verifiedPill, seal } from './media.js';
+import { icon, logo, wordmark } from './icons.js';
 import { sha256, pickWinner } from './crypto.js';
 import * as pwa from './pwa.js';
 
@@ -51,7 +51,7 @@ const cart = {
 
 function confetti(el, n = 70) {
   const box = document.createElement('div'); box.className = 'confetti'; box.setAttribute('aria-hidden', 'true');
-  const cols = ['#FFCF1F', '#2F3BFF', '#FFFFFF', '#FF8FB8', '#00A86B', '#FF4A2D'];
+  const cols = ['#FFC845', '#0E7A5F', '#FF6B57', '#7CD3B4', '#FFE08A', '#2B45B8'];
   for (let i = 0; i < n; i++) {
     const p = document.createElement('i');
     if (i % 3 === 0) p.className = 'ball';
@@ -67,18 +67,18 @@ function confetti(el, n = 70) {
   setTimeout(() => box.remove(), 6000);
 }
 
-function progressBar(pct, color = 'var(--red)') {
-  return `<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}" aria-label="Avance hacia la meta"><i style="--p:${Math.max(2, pct)}%;--bar:${color}"></i></div>`;
+function progressBar(pct) {
+  return `<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct)}" aria-label="Avance hacia la meta"><i style="--p:${Math.max(3, pct)}%"></i></div>`;
 }
 
-function installBtn(cls = 'btn btn-s btn-yellow') {
+function installBtn(cls = 'btn btn-s btn-light') {
   return pwa.canInstall() ? `<button class="${cls}" data-install>${icon('download', 18)} Instalar</button>` : '';
 }
 
 async function doInstall() {
   const r = await pwa.install();
   if (r === 'ios') {
-    sheet(`<h2 class="display">Instálala en tu iPhone</h2>
+    sheet(`<h2>Instálala en tu iPhone</h2>
       <p>Así queda como app en tu pantalla de inicio, sin pasar por la App Store.</p>
       <ol class="ios-steps">
         <li>Abre esta página en Safari.</li>
@@ -98,13 +98,13 @@ document.addEventListener('click', e => {
 });
 
 function openMore() {
-  sheet(`<h2 class="display">Más</h2>
+  sheet(`<h2>Más</h2>
     <ul class="menu">
       ${pwa.canInstall() ? `<li><button data-install data-close><span class="mi">${icon('download')}</span><span>Instalar la app<small>Queda en tu pantalla de inicio</small></span></button></li>` : ''}
       <li><a href="#/postular" data-close><span class="mi">${icon('hand')}</span><span>Mis postulaciones<small>Sigue el estado de tu caso</small></span></a></li>
       <li><a href="../admin/" data-close><span class="mi">${icon('shield')}</span><span>Panel de administración<small>Para el equipo · PIN de demo 1234</small></span></a></li>
       <li><a href="../" data-close><span class="mi">${icon('heart')}</span><span>Cómo funciona unamano<small>Ir a la página principal</small></span></a></li>
-      <li><button data-reset><span class="mi" style="background:var(--pink)">${icon('refresh')}</span><span>Reiniciar la demo<small>Borra compras y postulaciones de este teléfono</small></span></button></li>
+      <li><button data-reset><span class="mi" style="background:var(--coral-50);color:var(--coral)">${icon('refresh')}</span><span>Reiniciar la demo<small>Borra compras y postulaciones de este teléfono</small></span></button></li>
     </ul>`, {
     onOpen: (s, close) => {
       $('[data-reset]', s).addEventListener('click', () => { db.reset(); cart.clear(); close(); toast('Demo reiniciada'); route(); });
@@ -130,13 +130,12 @@ function viewHome() {
 
   view.innerHTML = `
     <header class="topbar">
-      <a class="brand" href="#/" aria-label="unamano, inicio">${logo(36)}${wordmark(26)}</a>
+      <a class="brand" href="#/" aria-label="unamano, inicio">${logo(34)}${wordmark(24)}</a>
       <div class="topbar-r">${installBtn()}<a href="#/mis-numeros" class="icon-btn" aria-label="Mis números">${icon('ticket')}</a></div>
     </header>
-    <div class="demo-banner">${icon('alert', 16)} <span><b>Modo demo:</b> causas y pagos de ejemplo, no se cobra dinero real.</span></div>
     <section class="hello">
-      <p class="eyebrow">${prof.name ? 'Hola, ' + esc(prof.name.split(' ')[0]) : 'Rifas con causa verificada'}</p>
-      <h1 class="display">¿A quién le echamos <em>una&nbsp;mano</em> hoy?</h1>
+      <p>${prof.name ? 'Hola, ' + esc(prof.name.split(' ')[0]) : 'Rifas solidarias verificadas'}</p>
+      <h1>¿A quién le echamos <span class="warm">una mano</span> hoy?</h1>
     </section>
     <label class="search">${icon('search', 20)}<span class="sr-only">Buscar causas</span>
       <input type="search" id="q" placeholder="Nombre, comuna o tratamiento" autocomplete="off"></label>
@@ -153,6 +152,7 @@ function viewHome() {
       <div class="promise"><span class="pi">${icon('refresh')}</span><div><b>Si no se llega a la meta, se devuelve todo</b><span>Automático, al mismo medio de pago.</span></div></div>
       <div class="promise"><span class="pi">${icon('hash')}</span><div><b>Sorteo que cualquiera puede auditar</b><span>La huella se publica antes de vender el primer número.</span></div></div>
     </div>
+    <div class="demo-banner" style="margin-top:22px">${icon('alert', 16)} <span>Versión demo: las causas son de ejemplo y los pagos son simulados.</span></div>
     <a class="cta-apply" href="#/postular">
       <div><h3>¿Conoces a alguien que necesita una mano?</h3><p>Postula el caso junto a tu junta de vecinos, club o centro de padres.</p></div>
       <span class="arr">${icon('arrow')}</span>
@@ -177,12 +177,15 @@ function viewHome() {
 
 function posterCard(c) {
   const s = db.stats(c);
-  return `<a class="pcard" href="#/causa/${c.id}">
-    <div class="pcard-art">${poster(c)}<span class="pcard-stamp">${stamp({ size: 76 }).replace('<svg', '<svg class="stamp"')}</span></div>
-    <div class="pcard-stub">
-      <div class="pcard-title">${esc(c.title)}</div>
-      ${progressBar(s.pct, pal(c).bg === '#FFCF1F' ? 'var(--blue)' : pal(c).bg)}
-      <div class="pcard-meta"><span><b>${clp(s.raised)}</b> de ${clp(c.goal)}</span><span>${icon('clock', 14)} ${db.timeLeft(s.ms)}</span></div>
+  const hot = s.ms < 2 * 864e5;
+  return `<a class="fcard" href="#/causa/${c.id}">
+    <div style="position:relative">${photo(c, { w: 700 })}
+      <div class="fcard-top">${verifiedPill()}<span class="time-pill ${hot ? 'hot' : ''}">${icon('clock', 14, 2.4)} ${db.timeLeft(s.ms)}</span></div></div>
+    <div class="fcard-b">
+      <span class="fcard-t">${esc(c.title)}</span>
+      <span class="fcard-o">${esc(c.organizer.name)} · ${esc(c.beneficiary.comuna)}</span>
+      ${progressBar(s.pct)}
+      <div class="money-row"><span><b>${clp(s.raised)}</b> de ${clp(c.goal)}</span><span class="pct">${Math.floor(s.pct)}%</span></div>
     </div>
   </a>`;
 }
@@ -191,12 +194,12 @@ function rowCard(c) {
   const s = db.stats(c);
   const done = c.status !== 'live';
   return `<a class="row" href="#/causa/${c.id}">
-    <div class="row-art">${poster(c, { name: false, label: false, ratio: 'square' })}</div>
+    ${photo(c, { w: 300 })}
     <div class="row-b">
       <span class="row-t">${esc(c.title)}</span>
-      <span class="row-s">${esc(c.beneficiary.comuna)} · ${esc(c.organizer.name)}</span>
-      ${done ? `<span class="chip chip-ok" style="align-self:flex-start">Meta lograda · sorteado</span>` : progressBar(s.pct, 'var(--blue)')}
-      ${done ? '' : `<span class="row-s"><b style="color:var(--ink)">${Math.floor(s.pct)}%</b> · cierra en ${db.timeLeft(s.ms)}</span>`}
+      <span class="row-s">${esc(c.beneficiary.comuna)} · ${CATEGORIES[c.category]}</span>
+      ${done ? `<span class="chip chip-ok" style="align-self:flex-start">${icon('check', 14, 3)} Meta cumplida</span>` : progressBar(s.pct)}
+      ${done ? '' : `<span class="row-s"><b>${Math.floor(s.pct)}%</b> · quedan ${db.timeLeft(s.ms)}</span>`}
     </div>
   </a>`;
 }
@@ -204,12 +207,12 @@ function rowCard(c) {
 function splitBlock(c) {
   const sp = c.split;
   const segs = [
-    { k: 'treatment', label: 'Tratamiento', color: 'var(--green)', txt: `Pago directo a ${esc(c.clinic.name)}` },
-    { k: 'prize', label: 'Premio', color: 'var(--yellow)', txt: c.prizeMode === 'donado' ? 'El premio fue donado' : 'Compra del premio' },
-    { k: 'ops', label: 'Verificación y operación', color: 'var(--pink)', txt: 'Equipo que revisa cada caso, pagos y plataforma' },
+    { k: 'treatment', label: 'Tratamiento', color: 'var(--brand)', fg: '#fff', txt: `Pago directo a ${esc(c.clinic.name)}` },
+    { k: 'prize', label: 'Premio', color: 'var(--sun)', fg: 'var(--ink)', txt: c.prizeMode === 'donado' ? 'El premio fue donado' : 'Compra del premio' },
+    { k: 'ops', label: 'Verificación y operación', color: 'var(--coral)', fg: '#fff', txt: 'Equipo que revisa cada caso, pagos y plataforma' },
   ].filter(x => sp[x.k] > 0);
   return `<div class="split-bar" role="img" aria-label="${segs.map(s => `${s.label} ${sp[s.k]}%`).join(', ')}">
-      ${segs.map(s => `<div style="flex:${sp[s.k]};background:${s.color};color:var(--ink)">${sp[s.k]}%</div>`).join('')}
+      ${segs.map(s => `<div style="flex:${sp[s.k]};background:${s.color};color:${s.fg}">${sp[s.k]}%</div>`).join('')}
     </div>
     <div class="split-legend">${segs.map(s => `<div><i style="background:${s.color}"></i><span><b style="color:var(--ink)">${s.label}:</b> ${s.txt}</span></div>`).join('')}</div>`;
 }
@@ -218,66 +221,67 @@ function viewCause(id) {
   const c = db.cause(id);
   if (!c || !['live', 'drawn', 'refunded'].includes(c.status)) return notFound();
   const s = db.stats(c);
-  const p = pal(c);
   document.body.classList.add('no-tabbar');
+  const cheer = s.pct >= 90 ? `¡Queda muy poco! Faltan ${clp(s.missing)} para la meta.`
+    : s.pct >= 50 ? `Ya vamos en más de la mitad. Faltan ${clp(s.missing)}.`
+    : `Cada número suma. Faltan ${clp(s.missing)} para la meta.`;
   view.innerHTML = `
     <article>
       <div class="cause-hero">
-        ${poster(c, { label: false })}
+        ${photo(c, { w: 1000 })}
         <div class="hero-top">
-          <a href="#/" class="icon-btn solid" aria-label="Volver">${icon('back')}</a>
-          <button class="icon-btn solid" data-share aria-label="Compartir">${icon('share')}</button>
+          <a href="${ADMIN ? '#/admin' : '#/'}" class="icon-btn float" aria-label="Volver">${icon('back')}</a>
+          <button class="icon-btn float" data-share aria-label="Compartir">${icon('share')}</button>
         </div>
-        <div class="hero-stamp"><span class="stamp thunk" style="--rot:-14deg;display:block">${stamp({ size: 128 })}</span></div>
       </div>
-      <div class="cause-body">
+      <div class="cause-sheet">
+        ${seal(84)}
         <div>
-          <p class="eyebrow" style="margin:0;color:var(--ink-3)">${CATEGORIES[c.category]} · ${esc(c.beneficiary.comuna)} · ${esc(c.beneficiary.age)} años</p>
-          <h1 class="display">${esc(c.title)}</h1>
-          <p class="lead">${esc(c.treatment)}</p>
+          <span class="eyebrow">${CATEGORIES[c.category]} · ${esc(c.beneficiary.comuna)}</span>
+          <h1>${esc(c.title)}</h1>
+          <p class="lead">${esc(c.treatment)} para ${esc(c.beneficiary.first)}, ${esc(c.beneficiary.age)} años.</p>
         </div>
         <div class="org-line"><span class="oi">${icon('people')}</span><div>Organiza la rifa<b>${esc(c.organizer.name)}</b></div></div>
 
         <div class="meter">
-          <div class="meter-amt display num">${clp(s.raised)}</div>
-          <div class="meter-sub">recaudado de una meta de <b>${clp(c.goal)}</b></div>
-          ${progressBar(s.pct, p.bg === '#FFCF1F' ? 'var(--blue)' : 'var(--red)')}
+          <div class="meter-amt num">${clp(s.raised)}</div>
+          <div class="meter-sub">recaudados de una meta de <b>${clp(c.goal)}</b></div>
+          ${progressBar(s.pct)}
           <div class="meter-row">
             <div><b class="num">${Math.floor(s.pct)}%</b><span>de la meta</span></div>
             <div><b class="num">${s.sold.toLocaleString('es-CL')}</b><span>números vendidos</span></div>
             <div><b data-countdown>${c.status === 'live' ? db.timeLeft(s.ms) : 'Cerrada'}</b><span>${c.status === 'live' ? 'para el sorteo' : fmtDate(c.drawAt)}</span></div>
           </div>
+          ${c.status === 'live' ? `<div class="cheer">${icon('heart', 18, 2.4)}<span>${cheer}</span></div>` : ''}
         </div>
 
-        <div class="prize ticket">
-          <span class="eyebrow">El premio</span>
-          <span class="prize-name">${esc(c.prize)}</span>
-          <span class="prize-mode">${c.prizeMode === 'donado' ? 'Donado: no sale de lo recaudado' : `Se compra con el ${c.split.prize}% de lo recaudado`} · sorteo ${fmtDateTime(c.drawAt)}</span>
-          <span class="prize-ic">${icon('gift', 28)}</span>
+        <div class="prize">
+          <span class="prize-ic">${icon('gift', 26)}</span>
+          <div><span class="eyebrow">El premio</span><span class="prize-name">${esc(c.prize)}</span>
+          <span class="prize-mode">${c.prizeMode === 'donado' ? 'Donado, no sale de lo recaudado' : `Se compra con el ${c.split.prize}% de lo recaudado`} · sorteo el ${fmtDateTime(c.drawAt)}</span></div>
         </div>
 
-        <section class="block"><h2>La historia</h2><p>${esc(c.story)}</p></section>
+        <section class="block"><h2>La historia de ${esc(c.beneficiary.first)}</h2><p>${esc(c.story)}</p></section>
 
-        <section class="seal block">
-          <span class="seal-stamp">${stamp({ size: 130 }).replace('<svg', '<svg class="stamp"')}</span>
-          <h2>El sello unamano</h2>
-          <p style="color:#CFCBC0">Antes de publicar esta rifa, nuestro equipo revisó:</p>
+        <section class="trust">
+          <div class="trust-h"><span class="ck" style="width:44px;height:44px;border-radius:14px">${icon('shield', 22, 2.2)}</span>
+            <div><h2>Lo que verificamos</h2><p>Antes de publicar, nuestro equipo revisó todo esto.</p></div></div>
           <ul class="checks">
-            ${CHECKS.map(k => `<li><span class="ck ${c.checks[k.key] ? '' : 'no'}">${icon(c.checks[k.key] ? 'check' : 'clock', 16, 3)}</span><div><b>${k.label}</b><span>${k.how}${k.key === 'medico' ? ` · ${esc(c.doctor.name)}, ${esc(c.doctor.specialty)}` : ''}${k.key === 'clinica' ? ` · ${esc(c.clinic.name)}, ${clp(c.clinic.budget)}` : ''}</span></div></li>`).join('')}
+            ${CHECKS.map(k => `<li><span class="ck ${c.checks[k.key] ? '' : 'no'}">${icon(c.checks[k.key] ? 'check' : 'clock', 15, 3)}</span><div><b>${k.label}</b><span>${k.how}${k.key === 'medico' ? ` · ${esc(c.doctor.name)}, ${esc(c.doctor.specialty)}` : ''}${k.key === 'clinica' ? ` · ${esc(c.clinic.name)}, ${clp(c.clinic.budget)}` : ''}</span></div></li>`).join('')}
           </ul>
           <div class="hash-line">${icon('hash', 16)}<span>Huella del sorteo, publicada antes de vender: <code>${c.seedHash.slice(0, 16)}…</code></span></div>
         </section>
 
         <section class="block"><h2>A dónde va tu plata</h2>${splitBlock(c)}</section>
 
-        <div class="guarantee"><span class="gi">${icon('refresh')}</span><div><b>Devolución garantizada</b><span>Si al ${fmtDate(c.drawAt)} no se llega a la meta, se devuelve el 100% de lo que pagaste, al mismo medio de pago.</span></div></div>
+        <div class="guarantee"><span class="gi">${icon('refresh')}</span><div><b>Devolución garantizada</b><span>Si al ${fmtDate(c.drawAt)} no se llega a la meta, te devolvemos el 100% al mismo medio de pago.</span></div></div>
       </div>
       <div class="buybar">
         ${c.status === 'live' ? `
           <div class="pr"><b class="num">${clp(c.price)}</b><span>por número · quedan ${s.available.toLocaleString('es-CL')}</span></div>
-          <a class="btn btn-yellow" href="#/causa/${c.id}/numeros">${icon('ticket', 20)} Elegir números</a>` : `
-          <div class="pr"><b>${c.status === 'drawn' ? 'Sorteada' : 'Devuelta'}</b><span>${c.status === 'drawn' ? 'Meta lograda' : 'No se llegó a la meta'}</span></div>
-          <a class="btn btn-blue" href="#/sorteo/${c.id}">Ver resultado ${icon('arrow', 18)}</a>`}
+          <a class="btn btn-l" href="#/causa/${c.id}/numeros">${icon('ticket', 20)} Elegir números</a>` : `
+          <div class="pr"><b>${c.status === 'drawn' ? 'Meta cumplida' : 'Devuelta'}</b><span>${c.status === 'drawn' ? 'Ya se hizo el sorteo' : 'No se llegó a la meta'}</span></div>
+          <a class="btn btn-l" href="#/sorteo/${c.id}">Ver resultado ${icon('arrow', 18)}</a>`}
       </div>
     </article>`;
   $('[data-share]').addEventListener('click', () => shareCause(c));
@@ -302,7 +306,7 @@ function viewNumbers(id) {
   view.innerHTML = `
     <header class="subbar">
       <a href="#/causa/${c.id}" class="icon-btn" aria-label="Volver a la causa">${icon('back')}</a>
-      <div><small>${esc(c.title)}</small><h1 class="display">Elige tus números</h1></div>
+      <div><small>${esc(c.title)}</small><h1>Elige tus números</h1></div>
     </header>
     <div class="pick-tools">
       <div class="stepper" aria-label="Cantidad al azar">
@@ -310,17 +314,17 @@ function viewNumbers(id) {
         <output id="qty">1</output>
         <button type="button" data-q="1" aria-label="Más">${icon('plus', 18)}</button>
       </div>
-      <button class="btn btn-s btn-blue" id="rnd">${icon('dice', 18)} Al azar</button>
+      <button class="btn btn-s btn-light" id="rnd">${icon('dice', 18)} Al azar</button>
       <button class="btn btn-s btn-ghost" id="clr">Limpiar</button>
     </div>
     <div class="pages" role="group" aria-label="Rango de números" id="pages"></div>
-    <div class="legend"><span><i style="background:#fff"></i>Libre</span><span><i style="background:var(--yellow)"></i>Tuyo</span><span><i style="background:var(--paper-2);border-color:transparent"></i>Vendido</span></div>
+    <div class="legend"><span><i style="background:#fff;border:1px solid var(--line)"></i>Libre</span><span><i style="background:var(--brand)"></i>Tuyos</span><span><i style="background:var(--surface-2)"></i>Vendido</span></div>
     <div class="ngrid" id="grid" role="group" aria-label="Números"></div>
     <div class="tray">
       <div class="tray-chips" id="chips"></div>
       <div class="tray-row">
         <div class="t"><span id="cnt"></span><b id="tot" class="num"></b></div>
-        <button class="btn btn-yellow" id="go">Continuar ${icon('arrow', 18)}</button>
+        <button class="btn" id="go">Continuar ${icon('arrow', 18)}</button>
       </div>
     </div>`;
 
@@ -389,16 +393,16 @@ function viewCheckout() {
   view.innerHTML = `
     <header class="subbar">
       <a href="#/causa/${c.id}/numeros" class="icon-btn" aria-label="Volver a los números">${icon('back')}</a>
-      <div><small>Paso final</small><h1 class="display">Tu aporte</h1></div>
+      <div><small>Paso final</small><h1>Tu aporte</h1></div>
     </header>
     <div class="summary">
-      <div class="summary-art">${poster(c, { label: false, name: false, ratio: 'square' })}</div>
+      ${photo(c, { w: 300 })}
       <div class="summary-b">
         <span class="t">${esc(c.title)}</span>
         <div class="nums">${k.numbers.map(n => `<span>${pad(n)}</span>`).join('')}</div>
-        <span class="tot num">${clp(total)}</span>
       </div>
     </div>
+    <div class="total-line"><span>${plural(k.numbers.length, 'número', 'números')} × ${clp(c.price)}</span><b class="num">${clp(total)}</b></div>
     <form class="form" id="f" novalidate>
       <div class="field"><label for="n">Nombre y apellido</label><input id="n" name="name" autocomplete="name" required value="${esc(prof.name || '')}"></div>
       <div class="field"><label for="e">Correo</label><input id="e" name="email" type="email" inputmode="email" autocomplete="email" required value="${esc(prof.email || '')}"><span class="hint">Aquí te llegan tus números y el resultado del sorteo.</span></div>
@@ -411,12 +415,12 @@ function viewCheckout() {
         </div>
       </div>
       <label class="checkline"><input type="checkbox" name="terms" required><span>Leí y acepto las <button type="button" class="linkish" id="bases">bases de esta rifa</button>. Si no se llega a la meta, me devuelven todo.</span></label>
-      <button class="btn btn-yellow btn-block" type="submit" style="min-height:60px;font-size:18px">${icon('lock', 20)} Pagar ${clp(total)}</button>
+      <button class="btn btn-l btn-block" type="submit">${icon('lock', 20)} Pagar ${clp(total)}</button>
     </form>
     <p class="secure">${icon('shield', 16)} Modo demo: el pago es simulado y no se cobra dinero.</p>`;
 
   $('#bases').addEventListener('click', () => sheet(`
-    <h2 class="display">Bases de la rifa</h2>
+    <h2>Bases de la rifa</h2>
     <div class="block" style="font-size:15px;color:var(--ink-2);line-height:1.6">
       <p><b style="color:var(--ink)">Organiza:</b> ${esc(c.organizer.name)} (${esc(c.organizer.type)}), con fines benéficos a favor de ${esc(c.beneficiary.name)}.</p>
       <p><b style="color:var(--ink)">Números:</b> del ${pad(1)} al ${pad(c.total)}, a ${clp(c.price)} cada uno.</p>
@@ -440,7 +444,7 @@ function viewCheckout() {
     if (!ok) { $('.err input', f)?.focus(); return; }
     const method = f.method.value;
     const ov = document.createElement('div'); ov.className = 'paying'; ov.setAttribute('role', 'alert');
-    ov.innerHTML = `<div><div class="spin">${logo(92)}</div><h2 class="display">Procesando…</h2><p>Conectando con ${esc(method)} (simulado)</p></div>`;
+    ov.innerHTML = `<div><div class="spin"></div><h2>Procesando tu pago…</h2><p>Conectando con ${esc(method)} (simulado)</p></div>`;
     document.body.append(ov);
     setTimeout(() => {
       try {
@@ -462,16 +466,17 @@ function viewThanks(pid) {
   document.body.classList.add('no-tabbar');
   view.innerHTML = `
     <section class="thanks">
-      <a href="#/" class="icon-btn" style="background:var(--paper)" aria-label="Cerrar">${icon('close')}</a>
-      <h1 class="display">¡Gracias,<br><em>${esc(p.buyer.name.split(' ')[0])}!</em></h1>
+      <a href="#/" class="icon-btn" aria-label="Cerrar">${icon('close')}</a>
+      <div class="big-heart">${icon('heart', 48, 2.2).replace('fill="none"', 'fill="currentColor"')}</div>
+      <h1>¡Gracias, <span class="warm">${esc(p.buyer.name.split(' ')[0])}</span>!</h1>
       <p class="lead">Tu aporte de <b>${clp(p.amount)}</b> ya cuenta para ${esc(c.beneficiary.first)}. Estos son tus números para el sorteo del ${fmtDate(c.drawAt)}:</p>
       <div class="tix">
-        ${p.numbers.slice(0, 8).map((n, i) => `<div class="tix-one ticket" style="--i:${i}"><span class="n">${pad(n)}</span><span class="m">${esc(c.beneficiary.first.toUpperCase())}<br>${fmtDate(c.drawAt).toUpperCase()}</span></div>`).join('')}
+        ${p.numbers.slice(0, 8).map((n, i) => `<div class="tix-one ticket" style="--i:${i}"><span class="n">${pad(n)}</span><span class="m">Por ${esc(c.beneficiary.first)}<br>Sorteo ${fmtDate(c.drawAt)}</span></div>`).join('')}
         ${p.numbers.length > 8 ? `<p style="margin:0;font-weight:700">y ${p.numbers.length - 8} más en Mis números</p>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:12px;position:relative;z-index:2;margin-top:6px">
-        <button class="btn btn-paper btn-block" data-share>${icon('share', 20)} Compartir la causa</button>
-        <a class="btn btn-block" href="#/mis-numeros">Ver mis números</a>
+        <button class="btn btn-sun btn-block" data-share>${icon('share', 20)} Invita a otros a sumarse</button>
+        <a class="btn btn-light btn-block" href="#/mis-numeros">Ver mis números</a>
       </div>
     </section>`;
   $('[data-share]').addEventListener('click', () => shareCause(c));
@@ -482,29 +487,29 @@ function viewMine() {
   const ps = db.purchases();
   view.innerHTML = `
     <section class="page-head">
-      <p class="eyebrow" style="color:var(--ink-3);margin:0 0 10px">Tu billetera solidaria</p>
-      <h1 class="display">Mis <em style="color:var(--red)">números</em></h1>
+      <span class="eyebrow">Tu billetera solidaria</span>
+      <h1>Mis números</h1>
     </section>
     ${ps.length ? `<div class="mine">${ps.map(p => {
       const c = db.cause(p.causeId);
       let chip, sub;
-      if (p.status === 'refunded') { chip = `<span class="chip chip-warn">Devuelto ${clp(p.amount)}</span>`; sub = 'No se llegó a la meta. Te devolvimos todo.'; }
-      else if (c.status === 'drawn' && p.won) { chip = `<span class="chip chip-bad">¡Ganaste!</span>`; sub = `Salió el ${pad(c.result.number)}. Te contactamos para la entrega.`; }
+      if (p.status === 'refunded') { chip = `<span class="chip chip-sun">Devuelto ${clp(p.amount)}</span>`; sub = 'No se llegó a la meta. Te devolvimos todo.'; }
+      else if (c.status === 'drawn' && p.won) { chip = `<span class="chip chip-coral">¡Ganaste!</span>`; sub = `Salió el ${pad(c.result.number)}. Te contactamos para la entrega.`; }
       else if (c.status === 'drawn') { chip = `<span class="chip chip-ok">Causa cumplida</span>`; sub = `Salió el ${pad(c.result.number)}. Esta vez no fue el tuyo, pero ${esc(c.beneficiary.first)} sí ganó.`; }
-      else { chip = `<span class="chip chip-blue">Participando</span>`; sub = `Sorteo en ${db.timeLeft(c.drawAt - Date.now())} · ${fmtDate(c.drawAt)}`; }
+      else { chip = `<span class="chip chip-sky">Participando</span>`; sub = `Sorteo en ${db.timeLeft(c.drawAt - Date.now())} · ${fmtDate(c.drawAt)}`; }
       const href = c.status === 'live' ? `#/causa/${c.id}` : `#/sorteo/${c.id}`;
       return `<a class="mtk ${p.won ? 'won' : ''}" href="${href}">
-        <div class="mtk-art">${poster(c, { label: false, ratio: 'square' })}</div>
+        ${photo(c, { w: 200 })}
         <div class="mtk-b">${chip}<span class="t">${esc(c.title)}</span>
           <div class="nums">${p.numbers.map(n => `<span>${pad(n)}</span>`).join('')}</div>
           <span class="s">${sub}</span></div>
       </a>`;
     }).join('')}</div>` : `
       <div class="empty">
-        <div style="width:120px">${logo(120)}</div>
-        <b class="display big">Todavía no tienes números</b>
-        <p style="margin:0;color:var(--ink-2)">Cuando compres, aquí verás tus tickets, cuándo es el sorteo y si te tocó.</p>
-        <a class="btn btn-yellow" href="#/">Ver causas</a>
+        <span class="em-ic">${icon('ticket', 34)}</span>
+        <b>Todavía no tienes números</b>
+        <p>Cuando compres, aquí verás tus tickets, cuándo es el sorteo y si te tocó.</p>
+        <a class="btn" href="#/">Ver causas</a>
       </div>`}`;
 }
 
@@ -535,9 +540,8 @@ function viewApply() {
 
   const bodies = [
     () => `
-      <div class="preview-poster"><div class="pp" id="pp">${poster(previewCause())}</div>
-        <div><p><b style="color:var(--ink)">Así se verá su afiche.</b> Si subes una foto, la imprimimos en duotono. Toca para cambiar el color.</p>
-        <div class="pills" style="margin-top:10px">${[0, 1, 2, 3, 4].map(i => `<button type="button" class="btn btn-s btn-paper" data-pal="${i}" aria-label="Color ${i + 1}" style="width:40px;padding:0;background:${['#2F3BFF', '#FF4A2D', '#FFCF1F', '#00A86B', '#FF8FB8'][i]}"></button>`).join('')}</div></div>
+      <div class="preview-card"><span id="pp">${photo(previewCause())}</span>
+        <div><b>Una buena foto hace la diferencia</b><p>Que se vea su cara y, si se puede, sonriendo. Es lo primero que verá la gente.</p></div>
       </div>
       <div class="form">
         ${field('b-name', 'Nombre completo del beneficiario', d.beneficiary.name, 'required autocomplete="off" data-k="beneficiary.name"')}
@@ -590,7 +594,7 @@ function viewApply() {
         ${field('dd', 'Fecha del sorteo', d.drawDate, `required type="date" min="${minDate}" max="${maxDate}" data-k="drawDate"`, 'Entre 2 semanas y 3 meses desde hoy. El sorteo es a las 20:00.')}
         ${plan ? `<div class="plan"><span class="eyebrow">Meta calculada</span><span class="goal num">${clp(plan.goal)}</span>
           <span class="meta">Se emiten ${plan.total.toLocaleString('es-CL')} números de ${clp(d.price)}. Hay que vender ${Math.ceil(plan.goal / d.price).toLocaleString('es-CL')} para llegar a la meta.</span>
-          ${splitBlock({ split: plan.split, clinic: { name: d.clinicName || 'la clínica' }, prizeMode: d.prizeMode }).replace('class="split-legend"', 'class="split-legend" style="color:#CFCBC0"').replaceAll('color:var(--ink)">', 'color:#fff">')}
+          ${splitBlock({ split: plan.split, clinic: { name: d.clinicName || 'la clínica' }, prizeMode: d.prizeMode })}
         </div>` : `<div class="infobox">${icon('alert', 18)}<span>Completa el presupuesto en el paso 2 para calcular la meta.</span></div>`}
       </div>`;
     },
@@ -611,15 +615,15 @@ function viewApply() {
     view.innerHTML = `
       <header class="subbar">
         <a href="${step === 0 ? '#/postular' : '#'}" class="icon-btn" aria-label="Volver" id="bk">${icon('back')}</a>
-        <div><small>Postular una causa · paso ${step + 1} de ${STEPS.length}</small><h1 class="display" style="font-size:22px">Postular</h1></div>
+        <div><small>Paso ${step + 1} de ${STEPS.length}</small><h1>Postular una causa</h1></div>
       </header>
       <div class="steps" aria-hidden="true">${STEPS.map((_, i) => `<i class="${i < step ? 'done' : i === step ? 'on' : ''}"></i>`).join('')}</div>
-      <div class="step-head"><span class="eyebrow">Paso ${step + 1}</span><h2 class="display">${STEPS[step].t}</h2><p>${STEPS[step].p}</p></div>
+      <div class="step-head"><span class="eyebrow">Paso ${step + 1}</span><h2>${STEPS[step].t}</h2><p>${STEPS[step].p}</p></div>
       <div style="height:16px"></div>
       ${bodies[step]()}
       <div class="form-nav">
-        ${step > 0 ? `<button class="btn btn-paper" id="prev">${icon('back', 18)} Atrás</button>` : ''}
-        <button class="btn ${step === STEPS.length - 1 ? 'btn-red' : 'btn-yellow'}" id="next">${step === STEPS.length - 1 ? 'Enviar postulación' : 'Siguiente'} ${icon('arrow', 18)}</button>
+        ${step > 0 ? `<button class="btn btn-light" id="prev">${icon('back', 18)} Atrás</button>` : ''}
+        <button class="btn" id="next">${step === STEPS.length - 1 ? 'Enviar postulación' : 'Siguiente'} ${icon('arrow', 18)}</button>
       </div>`;
     bind();
     window.scrollTo(0, 0);
@@ -631,10 +635,9 @@ function viewApply() {
     $('#bk').addEventListener('click', e => { if (step > 0) { e.preventDefault(); step--; render(); } });
     $$('[data-k]').forEach(el => el.addEventListener('input', () => {
       setK(el.dataset.k, el.value);
-      if (el.dataset.k === 'beneficiary.first' || el.dataset.k === 'category') { const pp = $('#pp'); if (pp) pp.innerHTML = poster(previewCause()); }
+      if (el.dataset.k === 'beneficiary.first') { const pp = $('#pp'); if (pp) pp.innerHTML = photo(previewCause()); }
       if (el.dataset.k === 'drawDate' && step === 3) { /* nada */ }
     }));
-    $$('[data-pal]').forEach(b => b.addEventListener('click', () => { d.palette = +b.dataset.pal; saveDraft(); $('#pp').innerHTML = poster(previewCause()); }));
     $('#cover')?.addEventListener('change', async e => {
       const file = e.target.files[0]; if (!file) return;
       try { d.cover = await shrink(file, 900); saveDraft(); render(); toast('Foto cargada'); }
@@ -692,9 +695,10 @@ function viewApply() {
     sessionStorage.removeItem(DRAFT);
     document.body.classList.remove('no-tabbar');
     view.innerHTML = `
-      <section class="thanks" style="background:var(--yellow)">
-        <a href="#/" class="icon-btn" style="background:var(--paper)" aria-label="Cerrar">${icon('close')}</a>
-        <h1 class="display">¡Recibida!</h1>
+      <section class="thanks">
+        <a href="#/" class="icon-btn" aria-label="Cerrar">${icon('close')}</a>
+        <div class="big-heart" style="background:var(--brand);box-shadow:0 16px 36px -12px rgba(14,122,95,.6)">${icon('check', 48, 3)}</div>
+        <h1>¡Postulación <span class="warm">recibida!</span></h1>
         <p class="lead">La causa de <b>${esc(c.beneficiary.first)}</b> quedó en revisión con el número <b>#${esc(c.id.slice(-5).toUpperCase())}</b>. Esto es lo que sigue:</p>
         <ol class="timeline" style="position:relative;z-index:2">
           <li><span class="tn">1</span><div><b>Revisamos los documentos</b><span>24 a 48 horas hábiles.</span></div></li>
@@ -703,7 +707,7 @@ function viewApply() {
           <li><span class="tn">4</span><div><b>Publicamos la rifa con el sello</b><span>Y les damos el kit para difundirla.</span></div></li>
         </ol>
         <a class="btn btn-block" href="#/postulacion/${c.id}" style="position:relative;z-index:2">Seguir mi postulación ${icon('arrow', 18)}</a>
-        <a class="btn btn-paper btn-block" href="../admin/#/admin/${c.id}" style="position:relative;z-index:2">${icon('shield', 18)} Verla como el equipo (demo)</a>
+        <a class="btn btn-light btn-block" href="../admin/#/admin/${c.id}" style="position:relative;z-index:2">${icon('shield', 18)} Verla como el equipo (demo)</a>
       </section>`;
     confetti($('.thanks'), 50);
   };
@@ -728,28 +732,27 @@ function viewApplyHome() {
   view.innerHTML = `
     <section class="apply-hero">
       <span class="eyebrow">Para familias y organizaciones</span>
-      <h1 class="display">Postula una <em>causa</em></h1>
+      <h1>Postula una <span class="warm">causa</span></h1>
       <p>Si alguien de tu comunidad necesita un tratamiento, organicen la rifa con nosotros. Verificamos el caso, operamos la venta y le pagamos directo a la clínica.</p>
-      <a class="btn btn-yellow" href="#/postular/nueva">${icon('hand', 20)} ${draft?.beneficiary?.name ? 'Continuar mi borrador' : 'Empezar postulación'}</a>
-      <span class="apply-stamp">${stamp({ size: 150, top: 'POSTULAR ES GRATIS', bottom: '· UNAMANO ·' })}</span>
+      <a class="btn btn-sun btn-l" href="#/postular/nueva">${icon('hand', 20)} ${draft?.beneficiary?.name ? 'Continuar mi borrador' : 'Empezar postulación'}</a>
     </section>
     ${mine.length ? `<h2 class="sec-t">Tus postulaciones</h2>
       <div class="list">${mine.map(c => {
         const done = STAGES.filter(st => stageDone(c, st)).length;
-        const chip = c.status === 'pending' ? `<span class="chip chip-warn">En revisión · ${done}/${STAGES.length}</span>` : c.status === 'live' ? '<span class="chip chip-ok">Publicada</span>' : c.status === 'rejected' ? '<span class="chip chip-bad">No aprobada</span>' : '<span class="chip chip-blue">Cerrada</span>';
-        return `<a class="row" href="#/postulacion/${c.id}"><div class="row-art">${poster(c, { name: false, label: false, ratio: 'square' })}</div>
+        const chip = c.status === 'pending' ? `<span class="chip chip-sun">En revisión · ${done}/${STAGES.length}</span>` : c.status === 'live' ? '<span class="chip chip-ok">Publicada</span>' : c.status === 'rejected' ? '<span class="chip chip-coral">No aprobada</span>' : '<span class="chip chip-sky">Cerrada</span>';
+        return `<a class="row" href="#/postulacion/${c.id}">${photo(c, { w: 300 })}
           <div class="row-b">${chip}<span class="row-t">${esc(c.title)}</span><span class="row-s">Enviada el ${fmtDate(c.createdAt)}</span></div></a>`;
       }).join('')}</div>` : ''}
     <h2 class="sec-t">Quién puede organizar</h2>
     <div class="stack" style="padding-top:0">
-      <div class="pills">${ORG_TYPES.map(t => `<span class="chip" style="height:36px;text-transform:none;letter-spacing:0;font-size:14px">${t}</span>`).join('')}</div>
+      <div class="org-tags">${ORG_TYPES.map(t => `<span>${t}</span>`).join('')}</div>
       <div class="infobox">${icon('people', 18)}<span>La rifa la organiza una organización con personalidad jurídica, con fines benéficos y a favor de otra persona. No se puede postular a título personal.</span></div>
     </div>
     <h2 class="sec-t">Qué vas a necesitar</h2>
     <div class="stack" style="padding-top:0">
-      <ul class="vlist card">
+      <ul class="need card" style="padding:6px 16px">
         ${[['user', 'Datos y foto de la persona', 'Nombre, edad, comuna y su historia.'], ['doc', 'Informe o diagnóstico médico', 'Firmado por el médico tratante.'], ['clinic', 'Presupuesto de la clínica', 'Con el nombre y teléfono de la clínica.'], ['id', 'Certificado de personalidad jurídica', 'Vigente, de la organización que rifa.'], ['gift', 'Un premio', 'Donado por alguien o comprado con un % de lo recaudado.']]
-          .map(([i, t, d]) => `<li><span class="vi">${icon(i, 20)}</span><div class="vt"><b>${t}</b><span>${d}</span></div></li>`).join('')}
+          .map(([i, t, d]) => `<li><span class="vi">${icon(i, 20)}</span><div><b>${t}</b><span>${d}</span></div></li>`).join('')}
       </ul>
     </div>
     <h2 class="sec-t">Cómo sigue</h2>
@@ -766,30 +769,30 @@ function viewMyCase(id) {
   const firstPending = STAGES.findIndex(st => !stageDone(c, st));
   const kit = `🎟️ ${c.title}\nRifa solidaria verificada por unamano. Número a ${clp(c.price)}, sorteo el ${fmtDate(c.drawAt)}. Premio: ${c.prize}.\n${new URL('#/causa/' + c.id, location.href).href}`;
   view.innerHTML = `
-    <header class="subbar"><a href="#/postular" class="icon-btn" aria-label="Volver">${icon('back')}</a><div style="min-width:0"><small>Postulación #${esc(c.id.slice(-5).toUpperCase())}</small><h1 class="display" style="font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.title)}</h1></div></header>
+    <header class="subbar"><a href="#/postular" class="icon-btn" aria-label="Volver">${icon('back')}</a><div style="min-width:0"><small>Postulación #${esc(c.id.slice(-5).toUpperCase())}</small><h1 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.title)}</h1></div></header>
     <div class="stack">
-      <div style="display:flex;gap:14px;align-items:center">
-        <div style="width:110px;border:2px solid var(--ink);border-radius:16px;overflow:hidden;aspect-ratio:300/380;flex-shrink:0">${poster(c)}</div>
-        <div><span class="eyebrow" style="color:var(--ink-3)">Estado</span>
-          <h2 class="display" style="margin:6px 0 0;font-size:34px">${c.status === 'pending' ? 'En revisión' : c.status === 'live' ? '¡Publicada!' : c.status === 'rejected' ? 'No aprobada' : 'Cerrada'}</h2>
+      <div style="display:flex;gap:16px;align-items:center">
+        ${photo(c, { w: 300, cls: 'ph-sq' }).replace('class="ph ph-sq"', 'class="ph" style="width:96px;height:96px;border-radius:22px;flex-shrink:0"')}
+        <div><span class="eyebrow">Estado</span>
+          <h2 class="h-m" style="margin-top:4px">${c.status === 'pending' ? 'En revisión' : c.status === 'live' ? '¡Publicada!' : c.status === 'rejected' ? 'No aprobada' : 'Cerrada'}</h2>
           <p style="margin:6px 0 0;color:var(--ink-2);font-size:14px">${c.status === 'pending' ? `Vamos en: ${STAGES[firstPending]?.t.toLowerCase()}.` : c.status === 'live' ? `Venta abierta hasta el ${fmtDate(c.drawAt)}.` : c.status === 'rejected' ? esc(c.rejectReason) : 'Revisa el resultado.'}</p></div>
       </div>
-      ${c.status === 'rejected' ? '' : `<ol class="timeline card" style="padding:18px">${STAGES.map((st, i) => {
+      ${c.status === 'rejected' ? '' : `<ol class="timeline card" style="padding:20px">${STAGES.map((st, i) => {
         const ok = stageDone(c, st); const now = i === firstPending;
-        return `<li><span class="tn" style="${ok ? 'background:var(--green);color:#fff' : now ? 'background:var(--yellow)' : 'background:var(--paper-2);border-style:dashed'}">${ok ? icon('check', 16, 3) : i + 1}</span><div><b>${st.t}</b><span>${now && c.status === 'pending' ? 'En curso · ' : ''}${st.s}</span></div></li>`;
+        return `<li><span class="tn ${ok ? 'ok' : now ? 'now' : ''}">${ok ? icon('check', 16, 3) : i + 1}</span><div><b>${st.t}</b><span>${now && c.status === 'pending' ? 'En curso · ' : ''}${st.s}</span></div></li>`;
       }).join('')}</ol>`}
       ${c.status === 'live' ? `
-        <div class="card" style="background:var(--yellow)"><h3>Kit para difundir</h3>
-          <p style="margin:0 0 12px;font-size:14px">Mándalo al grupo del curso, del club o de la junta. Cada número que se vende acerca la meta.</p>
-          <pre style="white-space:pre-wrap;font:inherit;font-size:14px;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:12px;margin:0 0 12px">${esc(kit)}</pre>
+        <div class="kit"><h3>Kit para difundir</h3>
+          <p style="margin:0;font-size:14px;color:#6B4A00">Mándalo al grupo del curso, del club o de la junta. Cada número que se vende acerca la meta.</p>
+          <pre>${esc(kit)}</pre>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <a class="btn btn-s" href="https://wa.me/?text=${encodeURIComponent(kit)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>
-            <button class="btn btn-s btn-paper" id="cp">Copiar texto</button>
+            <a class="btn btn-s" style="--bg:#1FA855" href="https://wa.me/?text=${encodeURIComponent(kit)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+            <button class="btn btn-s btn-light" id="cp">Copiar texto</button>
           </div></div>
-        <a class="btn btn-blue btn-block" href="#/causa/${c.id}">Ver la rifa publicada ${icon('arrow', 18)}</a>` : ''}
-      ${['drawn', 'refunded'].includes(c.status) ? `<a class="btn btn-blue btn-block" href="#/sorteo/${c.id}">Ver resultado ${icon('arrow', 18)}</a>` : ''}
+        <a class="btn btn-block" href="#/causa/${c.id}">Ver la rifa publicada ${icon('arrow', 18)}</a>` : ''}
+      ${['drawn', 'refunded'].includes(c.status) ? `<a class="btn btn-block" href="#/sorteo/${c.id}">Ver resultado ${icon('arrow', 18)}</a>` : ''}
       ${c.status === 'pending' ? `<div class="infobox">${icon('video', 18)}<span>Te escribiremos a ${esc(c.organizer.email || 'tu correo')} para agendar la videollamada. Si falta algo, te avisamos por ahí mismo.</span></div>
-        <a class="btn btn-paper btn-block" href="../admin/#/admin/${c.id}">${icon('shield', 18)} Simular la revisión del equipo (demo)</a>` : ''}
+        <a class="btn btn-light btn-block" href="../admin/#/admin/${c.id}">${icon('shield', 18)} Simular la revisión del equipo (demo)</a>` : ''}
     </div>`;
   $('#cp')?.addEventListener('click', () => navigator.clipboard?.writeText(kit).then(() => toast('Texto copiado')));
 }
@@ -816,12 +819,12 @@ function adminGate(next) {
   if (db.load().adminOk) return next();
   document.body.classList.add('no-tabbar');
   view.innerHTML = `
-    <header class="subbar"><a href="${ADMIN ? '../' : '#/'}" class="icon-btn" aria-label="Salir">${icon('back')}</a><div><small>Equipo unamano</small><h1 class="display" style="font-size:22px">Panel de administración</h1></div></header>
+    <header class="subbar"><a href="${ADMIN ? '../' : '#/'}" class="icon-btn" aria-label="Salir">${icon('back')}</a><div><small>Equipo unamano</small><h1>Panel de administración</h1></div></header>
     <form class="stack" id="pin" style="padding-top:40px">
-      <div style="width:110px">${logo(110)}</div>
-      <h2 class="display" style="margin:0;font-size:44px">Solo para el equipo de verificación</h2>
+      ${logo(64)}
+      <h2 class="h-m">Solo para el equipo de verificación</h2>
       <div class="field"><label for="pinv">PIN</label><input id="pinv" inputmode="numeric" maxlength="4" autocomplete="one-time-code" style="font-size:28px;letter-spacing:.4em;text-align:center"><span class="hint">PIN de la demo: 1234</span></div>
-      <button class="btn btn-yellow btn-block">Entrar</button>
+      <button class="btn btn-block btn-l">Entrar</button>
     </form>`;
   $('#pinv').focus();
   $('#pin').addEventListener('submit', e => {
@@ -842,10 +845,10 @@ function viewAdmin() {
     const done = all.filter(c => ['drawn', 'refunded', 'rejected'].includes(c.status));
     view.innerHTML = `
       <div class="admin">
-      <header class="subbar"><a href="${ADMIN ? '../' : '#/'}" class="icon-btn" aria-label="Salir del panel">${icon('back')}</a><div><small>Equipo unamano</small><h1 class="display" style="font-size:24px">Panel de administración</h1></div>
+      <header class="subbar"><a href="${ADMIN ? '../' : '#/'}" class="icon-btn" aria-label="Salir del panel">${icon('back')}</a><div><small>Equipo unamano</small><h1>Panel de administración</h1></div>
         <button class="btn btn-s btn-ghost" id="logout" style="margin-left:auto">Salir</button></header>
       <div class="kpis">
-        <div class="kpi y"><b>${pend.length}</b><span>por verificar</span></div>
+        <div class="kpi hl"><b>${pend.length}</b><span>por verificar</span></div>
         <div class="kpi"><b>${live.length}</b><span>rifas activas</span></div>
         <div class="kpi"><b class="num" style="font-size:18px">${clp(raised)}</b><span>en recaudación</span></div>
       </div>
@@ -861,11 +864,11 @@ function viewAdmin() {
       $('#alist').innerHTML = items.length ? items.map(c => {
         const sc = db.trustScore(c);
         const st = db.stats(c);
-        const chip = c.status === 'pending' ? (c.flags?.length ? '<span class="chip chip-bad">Alerta</span>' : `<span class="chip chip-warn">${sc}/100</span>`)
-          : c.status === 'live' ? `<span class="chip chip-blue">${Math.floor(st.pct)}%</span>`
-          : c.status === 'drawn' ? '<span class="chip chip-ok">Sorteada</span>' : c.status === 'refunded' ? '<span class="chip chip-warn">Devuelta</span>' : '<span class="chip">Rechazada</span>';
+        const chip = c.status === 'pending' ? (c.flags?.length ? '<span class="chip chip-coral">Alerta</span>' : `<span class="chip chip-sun">${sc}/100</span>`)
+          : c.status === 'live' ? `<span class="chip chip-sky">${Math.floor(st.pct)}%</span>`
+          : c.status === 'drawn' ? '<span class="chip chip-ok">Sorteada</span>' : c.status === 'refunded' ? '<span class="chip chip-sun">Devuelta</span>' : '<span class="chip">Rechazada</span>';
         return `<a class="row" href="#/admin/${c.id}">
-          <div class="row-art">${poster(c, { name: false, label: false, ratio: 'square' })}</div>
+          ${photo(c, { w: 300 })}
           <div class="row-b">${chip}<span class="row-t">${esc(c.title)}</span><span class="row-s">${esc(c.organizer.name)} · ${clp(c.goal)}</span></div></a>`;
       }).join('') : `<p class="empty-list">Nada por aquí.</p>`;
     };
@@ -888,17 +891,17 @@ function viewAdminCase(id) {
     const allOk = CHECKS.every(k => c.checks[k.key]);
     const statusTxt = { pending: 'Por verificar', live: 'Activa', drawn: 'Sorteada', refunded: 'Devuelta', rejected: 'Rechazada' }[c.status];
     view.innerHTML = `
-      <header class="subbar"><a href="#/admin" class="icon-btn" aria-label="Volver a la cola">${icon('back')}</a><div style="min-width:0"><small>Caso #${esc(c.id.slice(-5).toUpperCase())} · ${statusTxt}</small><h1 class="display" style="font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.title)}</h1></div></header>
+      <header class="subbar"><a href="#/admin" class="icon-btn" aria-label="Volver a la cola">${icon('back')}</a><div style="min-width:0"><small>Caso #${esc(c.id.slice(-5).toUpperCase())} · ${statusTxt}</small><h1 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.title)}</h1></div></header>
       <div class="stack">
-        <div style="display:flex;gap:14px;align-items:center">
-          <div style="width:96px;border:2px solid var(--ink);border-radius:16px;overflow:hidden;aspect-ratio:300/380">${poster(c)}</div>
+        <div class="full" style="display:flex;gap:14px;align-items:center">
+          ${photo(c, { w: 300 }).replace('class="ph"', 'class="ph" style="width:84px;height:84px;border-radius:20px;flex-shrink:0"')}
           <div style="flex:1;min-width:0"><b style="font-size:17px">${esc(c.beneficiary.name)}, ${esc(c.beneficiary.age)}</b><div style="font-size:14px;color:var(--ink-2)">${esc(c.treatment)} · ${esc(c.beneficiary.comuna)}</div></div>
-          <div class="score" aria-label="Puntaje de confianza ${sc} de 100"><b>${sc}</b></div>
+          <div class="score" style="--s:${sc}" aria-label="Puntaje de confianza ${sc} de 100"><b>${sc}</b></div>
         </div>
-        ${(c.flags || []).map(f => `<div class="flag">${icon('alert', 20)}<div><b>Alerta automática</b><br>${esc(f)}<br><button class="linkish" data-unflag style="color:#B3260F">Marcar como revisada</button></div></div>`).join('')}
+        ${(c.flags || []).map(f => `<div class="flag full">${icon('alert', 20)}<div><b>Alerta automática</b><br>${esc(f)}<br><button class="linkish" data-unflag style="color:#B3260F">Marcar como revisada</button></div></div>`).join('')}
 
         ${c.status === 'pending' ? `
-        <div class="card"><h3>Verificación</h3>
+        <div class="card pcard-a"><h3>Verificación</h3>
           <ul class="vlist">${CHECKS.map(k => `
             <li><span class="vi">${icon(k.icon, 20)}</span>
               <div class="vt"><b>${k.label}</b><span>${k.how}</span>
@@ -911,7 +914,7 @@ function viewAdminCase(id) {
           </ul>
         </div>` : ''}
 
-        <div class="card"><h3>Datos del caso</h3>
+        <div class="card pcard-a"><h3>Datos del caso</h3>
           <dl class="kv">
             <dt>Organiza</dt><dd>${esc(c.organizer.name)} (${esc(c.organizer.type)})${c.organizer.contact ? '<br>' + esc(c.organizer.contact) : ''}${c.organizer.email ? '<br>' + esc(c.organizer.email) : ''}</dd>
             <dt>Médico</dt><dd>${esc(c.doctor.name)}, ${esc(c.doctor.specialty)}</dd>
@@ -927,27 +930,27 @@ function viewAdminCase(id) {
         </div>
 
         ${c.status === 'live' ? `
-        <div class="card"><h3>Recaudación</h3>
-          <div class="display num" style="font-size:44px;color:var(--blue)">${clp(st.raised)}</div>
+        <div class="card pcard-a"><h3>Recaudación</h3>
+          <div class="num" style="font-size:38px;font-weight:800;letter-spacing:-.04em">${clp(st.raised)}</div>
           <div style="font-size:14px;color:var(--ink-2);margin:4px 0 10px">de ${clp(c.goal)} · ${st.sold.toLocaleString('es-CL')} números · cierra ${fmtDateTime(c.drawAt)}</div>
-          ${progressBar(st.pct, 'var(--blue)')}
-          <div class="hash-line" style="background:var(--paper-2);color:var(--ink-2);margin-top:14px">${icon('hash', 16)}<span>Huella publicada: <code style="color:var(--ink)">${c.seedHash}</code></span></div>
+          ${progressBar(st.pct)}
+          <div class="hash-line" style="margin-top:14px">${icon('hash', 16)}<span>Huella publicada: <code style="color:var(--ink)">${c.seedHash}</code></span></div>
         </div>
-        <div class="card"><h3>Herramientas de demo</h3>
+        <div class="card pcard-a"><h3>Herramientas de demo</h3>
           <div style="display:flex;flex-direction:column;gap:10px">
-            <button class="btn btn-paper btn-block" id="sim">${icon('people', 20)} Simular ventas (+${plural(Math.ceil(c.goal / c.price * .15), 'número', 'números')})</button>
-            <button class="btn btn-paper btn-block" id="closenow">${icon('clock', 20)} Cerrar la venta ahora</button>
-            <button class="btn btn-red btn-block" id="draw">${icon('dice', 20)} Ejecutar sorteo</button>
+            <button class="btn btn-light btn-block" id="sim">${icon('people', 20)} Simular ventas (+${plural(Math.ceil(c.goal / c.price * .15), 'número', 'números')})</button>
+            <button class="btn btn-light btn-block" id="closenow">${icon('clock', 20)} Cerrar la venta ahora</button>
+            <button class="btn btn-block" id="draw">${icon('dice', 20)} Ejecutar sorteo</button>
           </div>
           <p style="font-size:13px;color:var(--ink-3);margin:10px 0 0">Si al sortear no se llegó a la meta, el sistema devuelve automáticamente todas las compras.</p>
         </div>` : ''}
 
-        ${['drawn', 'refunded'].includes(c.status) ? `<a class="btn btn-blue btn-block" href="#/sorteo/${c.id}">Ver resultado público ${icon('arrow', 18)}</a>` : ''}
+        ${['drawn', 'refunded'].includes(c.status) ? `<a class="btn btn-block full" href="#/sorteo/${c.id}">Ver resultado público ${icon('arrow', 18)}</a>` : ''}
       </div>
       ${c.status === 'pending' ? `
       <div class="buybar" style="flex-wrap:wrap">
-        <button class="btn btn-paper" id="rej" style="flex:1">Rechazar</button>
-        <button class="btn btn-yellow" id="ok" style="flex:2" ${allOk && !c.flags?.length ? '' : 'disabled'}>${icon('shield', 20)} Aprobar y publicar</button>
+        <button class="btn btn-danger" id="rej" style="flex:1">Rechazar</button>
+        <button class="btn" id="ok" style="flex:2" ${allOk && !c.flags?.length ? '' : 'disabled'}>${icon('shield', 20)} Aprobar y publicar</button>
         ${allOk && !c.flags?.length ? '' : `<span style="flex-basis:100%;font-size:12px;color:var(--ink-3);text-align:center">${c.flags?.length ? 'Resuelve la alerta y completa' : 'Completa'} las ${CHECKS.length} verificaciones para publicar.</span>`}
       </div>` : ''}`;
 
@@ -961,10 +964,10 @@ function viewAdminCase(id) {
       catch (e) { toast(e.message, 'bad'); }
     });
     $('#rej')?.addEventListener('click', () => sheet(`
-      <h2 class="display">Rechazar caso</h2>
+      <h2>Rechazar caso</h2>
       <p>Se le avisa a la organización con el motivo.</p>
       <div class="field"><label for="why">Motivo</label><textarea id="why" placeholder="Ej: la clínica no confirmó el presupuesto"></textarea></div>
-      <div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn-paper" data-close style="flex:1">Cancelar</button><button class="btn btn-red" id="dorej" style="flex:1">Rechazar</button></div>`, {
+      <div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn-light" data-close style="flex:1">Cancelar</button><button class="btn btn-danger" id="dorej" style="flex:1">Rechazar</button></div>`, {
       onOpen: (s, close) => $('#dorej', s).addEventListener('click', () => {
         db.reject(c.id, $('#why', s).value.trim() || 'Sin motivo'); close(); toast('Caso rechazado'); viewAdminCase(id);
       }),
@@ -973,11 +976,11 @@ function viewAdminCase(id) {
     $('#closenow')?.addEventListener('click', () => { db.closeNow(c.id); toast('Venta cerrada'); viewAdminCase(id); });
     $('#draw')?.addEventListener('click', () => {
       const s2 = db.stats(c);
-      sheet(`<h2 class="display">¿Ejecutar el sorteo?</h2>
+      sheet(`<h2>¿Ejecutar el sorteo?</h2>
         <p>${s2.reached
           ? `Se llegó a la meta (${clp(s2.raised)} de ${clp(c.goal)}). Se revela la semilla y se calcula el número ganador entre los ${s2.sold.toLocaleString('es-CL')} vendidos.`
           : `<b style="color:#B3260F">No se llegó a la meta</b> (${clp(s2.raised)} de ${clp(c.goal)}). No hay sorteo: se devuelve el 100% a todos los compradores.`}</p>
-        <div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn-paper" data-close style="flex:1">Cancelar</button><button class="btn btn-red" id="dodraw" style="flex:1">${s2.reached ? 'Sortear' : 'Devolver todo'}</button></div>`, {
+        <div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn-light" data-close style="flex:1">Cancelar</button><button class="btn" id="dodraw" style="flex:1">${s2.reached ? 'Sortear' : 'Devolver todo'}</button></div>`, {
         onOpen: (s, close) => $('#dodraw', s).addEventListener('click', () => { db.runDraw(c.id); close(); go('#/sorteo/' + c.id + '?vivo'); }),
       });
     });
@@ -997,13 +1000,13 @@ function viewDraw(id, live) {
 
   if (c.status === 'refunded') {
     view.innerHTML = `
-      <section class="draw" style="background:var(--pink);color:var(--ink)">
-        <header class="subbar" style="background:var(--pink);color:var(--ink)"><a href="${ADMIN ? '#/admin/' + c.id : '#/'}" class="icon-btn" aria-label="Volver">${icon('back')}</a><div><small>${esc(c.title)}</small><h1 class="display" style="font-size:22px">Resultado</h1></div></header>
+      <section class="draw" style="background:var(--surface);color:var(--ink)">
+        <header class="subbar" style="color:var(--ink)"><a href="${ADMIN ? '#/admin/' + c.id : '#/'}" class="icon-btn" aria-label="Volver">${icon('back')}</a><div><small>${esc(c.title)}</small><h1>Resultado</h1></div></header>
         <div class="draw-hero">
-          <span class="eyebrow" style="color:var(--ink)">Sin sorteo</span>
-          <div class="ball" style="background:radial-gradient(circle at 35% 30%,#fff 0 14%,var(--paper) 15% 100%)"><div class="inner">${icon('refresh', 90, 2.4)}</div></div>
-          <h1 class="display" style="color:var(--ink)">Devolvimos todo</h1>
-          <p style="color:var(--ink)">No se llegó a la meta (${clp(r.raised)} de ${clp(c.goal)}), así que no hubo sorteo y cada compra se devolvió al mismo medio de pago.</p>
+          <span class="eyebrow" style="color:var(--brand)">Sin sorteo</span>
+          <div class="ball" style="background:var(--brand-50);box-shadow:none"><div class="inner" style="color:var(--brand)">${icon('refresh', 72, 2.2)}</div></div>
+          <h1 style="color:var(--ink)">Te devolvimos todo</h1>
+          <p style="color:var(--ink-2)">No se llegó a la meta (${clp(r.raised)} de ${clp(c.goal)}), así que no hubo sorteo y cada compra se devolvió al mismo medio de pago.</p>
         </div>
         <div class="impact">
           <div class="line"><span>Recaudado</span><b>${clp(r.raised)}</b></div>
@@ -1016,12 +1019,12 @@ function viewDraw(id, live) {
 
   view.innerHTML = `
     <section class="draw">
-      <header class="subbar"><a href="${ADMIN ? '#/admin/' + c.id : '#/'}" class="icon-btn" aria-label="Volver">${icon('back')}</a><div><small style="color:#C8CCFF">${esc(c.title)}</small><h1 class="display" style="font-size:22px">Resultado del sorteo</h1></div></header>
+      <header class="subbar"><a href="${ADMIN ? '#/admin/' + c.id : '#/'}" class="icon-btn" aria-label="Volver">${icon('back')}</a><div><small>${esc(c.title)}</small><h1>Resultado del sorteo</h1></div></header>
       <div class="draw-hero">
         <span class="eyebrow">Número ganador · ${fmtDateTime(r.at)}</span>
         <div class="ball ${live ? 'rolling' : ''}" id="ball"><div class="inner"><span class="digits" id="dg">${live ? '0000' : pad(r.number)}</span></div></div>
         <div id="after" style="${live ? 'opacity:0' : ''};transition:opacity .4s">
-          <h1 class="display">${iWon ? '¡Ganaste tú!' : `¡Meta cumplida para ${esc(c.beneficiary.first)}!`}</h1>
+          <h1>${iWon ? '¡Ganaste <span class="warm">tú</span>!' : `¡Meta cumplida para <span class="warm">${esc(c.beneficiary.first)}</span>!`}</h1>
           <p>${iWon ? `Tu número ${pad(r.number)} salió sorteado. Te contactamos para entregarte: ${esc(c.prize)}.` : `El ${pad(r.number)} se lleva ${esc(c.prize)}. ${r.winnerLabel ? 'Ya le avisamos.' : 'Ya le avisamos a quien lo compró.'}`}</p>
         </div>
       </div>
@@ -1030,16 +1033,16 @@ function viewDraw(id, live) {
         <div class="line"><span>Recaudado</span><b>${clp(r.raised)}</b></div>
         <div class="line"><span>Pagado a ${esc(c.clinic.name)}</span><b>${clp(r.paidClinic)}</b></div>
         <div class="line"><span>Números vendidos</span><b>${r.soldCount.toLocaleString('es-CL')}</b></div>
-        <button class="btn btn-block btn-paper" id="receipt">${icon('doc', 20)} Ver comprobante de pago</button>
+        <button class="btn btn-block btn-light" id="receipt">${icon('doc', 20)} Ver comprobante de pago</button>
       </div>
       <div class="verify">
         <b style="display:flex;gap:8px;align-items:center">${icon('shield', 20)} Verifica tú mismo el sorteo</b>
-        <span style="font-size:14px;color:#E6E8FF">Antes de vender publicamos la huella. Ahora revelamos la semilla. Si la huella de la semilla coincide, nadie la pudo cambiar.</span>
-        <span class="eyebrow" style="color:#C8CCFF">Huella publicada</span><code>${c.seedHash}</code>
-        <span class="eyebrow" style="color:#C8CCFF">Semilla revelada</span><code>${c.seed}</code>
-        <span style="font-size:12px;color:#C8CCFF">Ganador = vendidos ordenados [ sha256(semilla:${esc(c.id)}:${r.soldCount}) mod ${r.soldCount} ] = posición ${r.idx}</span>
+        <span style="font-size:14px;color:#BFE0D3">Antes de vender publicamos la huella. Ahora revelamos la semilla. Si la huella de la semilla coincide, nadie la pudo cambiar.</span>
+        <span class="lbl">Huella publicada</span><code>${c.seedHash}</code>
+        <span class="lbl">Semilla revelada</span><code>${c.seed}</code>
+        <span style="font-size:12px;color:#9FCDBB">Ganador = vendidos ordenados [ sha256(semilla:${esc(c.id)}:${r.soldCount}) mod ${r.soldCount} ] = posición ${r.idx}</span>
         <div id="vres"></div>
-        <button class="btn btn-yellow btn-block" id="verify">${icon('hash', 20)} Recalcular en mi teléfono</button>
+        <button class="btn btn-sun btn-block" id="verify">${icon('hash', 20)} Recalcular en mi teléfono</button>
       </div>
     </section>`;
 
@@ -1051,8 +1054,8 @@ function viewDraw(id, live) {
     $('#vres').innerHTML = `<div class="ok ${okHash && okWin ? '' : 'ko'}">${icon(okHash && okWin ? 'check' : 'alert', 20, 3)} ${okHash ? 'La huella coincide' : 'La huella NO coincide'} · ${okWin ? `el ganador es el ${pad(w.number)}` : 'el ganador no coincide'}</div>`;
   });
   $('#receipt').addEventListener('click', () => sheet(`
-    <h2 class="display">Comprobante</h2>
-    <div class="card" style="margin-top:10px">
+    <h2>Comprobante</h2>
+    <div class="card pcard-a" style="margin-top:10px">
       <dl class="kv">
         <dt>Pagado a</dt><dd>${esc(c.clinic.name)}</dd>
         <dt>Monto</dt><dd>${clp(r.paidClinic)}</dd>
@@ -1088,7 +1091,7 @@ function viewDraw(id, live) {
 }
 
 function notFound() {
-  view.innerHTML = `<div class="empty" style="margin-top:80px"><b class="display big">No encontramos esa página</b><a class="btn" href="#/">Volver a las causas</a></div>`;
+  view.innerHTML = `<div class="empty" style="margin-top:80px"><b>No encontramos esa página</b><a class="btn" href="#/">Volver a las causas</a></div>`;
 }
 
 // ---------- router ----------

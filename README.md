@@ -96,16 +96,18 @@ assets/css/app.css         Estilos de la app y del panel
 assets/css/landing.css     Estilos de la landing
 assets/js/data.js          Capa de datos (hoy localStorage) y reglas de negocio
 assets/js/crypto.js        SHA-256, semilla y selección del ganador
-assets/js/poster.js        Afiches generativos por causa
+assets/js/media.js         Fotos de las causas y sello de verificación
 assets/js/icons.js         Íconos, logo y timbre
 assets/js/app.js           Router y vistas
 assets/js/landing.js       Interacciones de la landing
 assets/js/pwa.js           Instalación y registro del service worker
-assets/fonts/              Fraunces y Archivo (SIL Open Font License)
+assets/fonts/              Plus Jakarta Sans y Fraunces (SIL Open Font License)
 assets/icons/              Íconos de la app
 ```
 
 ## Modo demo
+
+- Las fotos de las causas de ejemplo vienen de Unsplash (licencia libre) y se cargan desde internet. Antes de lanzar hay que reemplazarlas por fotos reales, con autorización de cada familia. Si una foto no carga, la app muestra la inicial del nombre.
 
 - Las causas son de ejemplo y los pagos son simulados.
 - Los datos viven en el `localStorage` del dispositivo: cada teléfono tiene su propia demo.

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>unamano — Compra un número. Paga una operación.</title>
   <meta name="description" content="Rifas solidarias con causa verificada. Juntas de vecinos, clubes y centros de padres organizan; unamano verifica el caso, opera la venta y paga directo a la clínica. Si no se llega a la meta, se devuelve todo.">
-  <meta name="theme-color" content="#2F3BFF">
+  <meta name="theme-color" content="#0E7A5F">
   <meta property="og:title" content="unamano — rifas que dan una mano">
   <meta property="og:description" content="Compra un número. Paga una operación. Causas verificadas, pago directo a la clínica y devolución garantizada.">
   <meta property="og:type" content="website">
@@ -13,182 +13,181 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icons/icon-192.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jakarta.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/landing.css">
 </head>
-<body class="grain">
+<body>
 
-<header class="nav">
+<header class="nav" id="nav">
   <div class="wrap">
-    <a class="brand" href="#" aria-label="unamano, inicio"><span data-logo="38"></span><span data-wordmark="28"></span></a>
+    <a class="brand" href="#" aria-label="unamano, inicio"><span data-logo="36"></span><span data-wordmark="24"></span></a>
     <nav class="nav-links" aria-label="Secciones">
       <a href="#como">Cómo funciona</a>
-      <a href="#sello">El sello</a>
+      <a href="#confianza">Confianza</a>
       <a href="#causas">Causas</a>
       <a href="#organizaciones">Organizaciones</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
-    <a class="btn btn-s btn-yellow" href="app/">Abrir la app</a>
+    <a class="btn btn-s" href="app/">Abrir la app</a>
   </div>
 </header>
 
 <main>
 <section class="hero">
   <div class="wrap">
-    <div>
-      <span class="hero-tag"><span data-icon="shield" data-size="16"></span> Rifas solidarias verificadas · Chile</span>
-      <h1 class="display mis">Compra un número.<span class="l2"><em>Paga</em> una operación.</span></h1>
-      <p class="lead">Las rifas de siempre, pero con la causa <b>verificada</b>, la plata pagada <b>directo a la clínica</b> y <b>devolución total</b> si no se llega a la meta.</p>
-      <div class="hero-ctas">
-        <a class="btn btn-yellow" href="app/"><span data-icon="ticket"></span> Ver causas activas</a>
-        <a class="btn btn-paper" href="app/#/postular"><span data-icon="hand"></span> Postular una causa</a>
+    <div class="hero-copy">
+      <span class="pill"><span class="dot"></span> Rifas solidarias verificadas en Chile</span>
+      <h1 class="h-xl">Compra un número.<br><span class="warm">Paga una operación.</span></h1>
+      <p class="lead">Las rifas de toda la vida, ahora con la causa <b>verificada</b>, la plata pagada <b>directo a la clínica</b> y <b>devolución total</b> si no se llega a la meta.</p>
+      <div class="ctas">
+        <a class="btn btn-l" href="app/"><span data-icon="heart"></span> Ver causas activas</a>
+        <a class="btn btn-l btn-light" href="app/#/postular">Postular una causa</a>
       </div>
-      <div class="hero-trust">
-        <span><span data-icon="check" data-size="18"></span> Médico y clínica confirmados</span>
-        <span><span data-icon="check" data-size="18"></span> Sorteo auditable</span>
-        <span><span data-icon="check" data-size="18"></span> Se instala en iPhone y Android</span>
-      </div>
+      <ul class="hero-trust">
+        <li><span data-icon="check" data-size="16" data-sw="3"></span> Médico y clínica confirmados</li>
+        <li><span data-icon="check" data-size="16" data-sw="3"></span> Sorteo que puedes auditar</li>
+        <li><span data-icon="check" data-size="16" data-sw="3"></span> Se instala en iPhone y Android</li>
+      </ul>
     </div>
 
-    <div class="tombola" aria-hidden="true">
-      <div class="tk tk-back ticket"><span class="eyebrow">x</span><span class="tk-n">0</span></div>
-      <div class="tk ticket">
-        <span class="eyebrow">Rifa solidaria · Nº de la suerte</span>
-        <span class="tk-n num">0847</span>
-        <span class="tk-stub"><span>SORTEO<br>28 NOV</span><b>$2.000</b></span>
-        <span class="tk-t">Por la cadera nueva de Rosa</span>
+    <div class="hero-art" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="hero-photo ph" data-photo="https://images.unsplash.com/photo-1758686253896-e6c76b6f7aa1" data-fb="R"></div>
+      <div class="hero-photo-2 ph" data-photo="https://images.unsplash.com/photo-1768244016879-a0f41e01281c" data-fb="U"></div>
+      <div class="fl fl-progress">
+        <div class="fl-row"><span class="vpill" data-vpill></span><span class="fl-time">6 días</span></div>
+        <b>Una cadera nueva para Rosa</b>
+        <div class="bar"><i style="--p:69%"></i></div>
+        <div class="fl-money"><span><strong>$3.120.000</strong> de $4.500.000</span><span class="pc">69%</span></div>
       </div>
-      <div class="hero-stamp"><span class="stamp" data-stamp data-thunk></span></div>
-      <div class="ballz">
-        <span style="left:2%;top:4%;width:92px;height:92px;background:var(--yellow);font-size:34px;--d:7s">7</span>
-        <span style="left:70%;top:70%;width:118px;height:118px;background:var(--red);font-size:44px;--d:6s;--dl:-2s">23</span>
-        <span style="left:-2%;top:76%;width:74px;height:74px;background:var(--pink);font-size:28px;--d:8s;--dl:-1s">5</span>
-        <span style="left:42%;top:-2%;width:64px;height:64px;background:var(--paper);font-size:24px;--d:5.5s;--dl:-3s">12</span>
-        <span style="left:30%;top:86%;width:84px;height:84px;background:var(--green);font-size:30px;--d:7.5s;--dl:-4s">41</span>
-      </div>
+      <div class="fl fl-paid"><span class="fl-ic" data-icon="clinic"></span><div><small>Pago directo a la clínica</small><b>$3.600.000</b></div></div>
+      <div class="fl fl-heart"><span data-icon="heart" data-size="20" data-fill></span> 1.560 números vendidos</div>
     </div>
   </div>
-  <div class="tear"></div>
 </section>
 
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track" id="marquee"></div>
-</div>
+<section class="promise-strip">
+  <div class="wrap">
+    <div><span class="pi g" data-icon="shield"></span><div><b>Causa verificada</b><span>Revisamos diagnóstico, médico, clínica y organización.</span></div></div>
+    <div><span class="pi s" data-icon="clinic"></span><div><b>Pago a la clínica</b><span>La plata nunca pasa por la familia ni por quien organiza.</span></div></div>
+    <div><span class="pi c" data-icon="refresh"></span><div><b>Devolución garantizada</b><span>Si no se llega a la meta, se devuelve el 100%.</span></div></div>
+    <div><span class="pi k" data-icon="hash"></span><div><b>Sorteo auditable</b><span>Cualquiera puede recalcular el ganador.</span></div></div>
+  </div>
+</section>
 
 <section class="sec problem">
-  <div class="wrap">
+  <div class="wrap two">
     <div data-reveal>
-      <span class="kicker eyebrow"><i></i> El problema</span>
-      <h2 class="h2 display">Las rifas por WhatsApp funcionan por <em>confianza.</em></h2>
-      <p class="sub">Y la confianza se abusa. Cada semana circulan rifas por causas que nadie puede comprobar. Al final pierden todos: la gente deja de comprar y las causas reales juntan menos.</p>
+      <span class="eyebrow">Por qué existimos</span>
+      <h2 class="h-l">Las rifas solidarias funcionan por <span class="warm">confianza.</span></h2>
+      <p class="sub">Y esa confianza se abusa. Circulan rifas por causas que nadie puede comprobar, la gente deja de comprar y las causas reales juntan menos. Quisimos arreglar eso.</p>
     </div>
     <div class="qs">
-      <div class="q" data-reveal style="--r:-1.5deg"><span class="qq">¿De verdad existe el diagnóstico?</span><div class="qa"><span data-icon="check" data-size="22" data-sw="3"></span> Lo verificamos con el médico y el registro de prestadores.</div></div>
-      <div class="q" data-reveal style="--r:1deg;--dl:.12s"><span class="qq">¿Quién se queda con la plata?</span><div class="qa"><span data-icon="check" data-size="22" data-sw="3"></span> Nadie: se le paga directo a la clínica.</div></div>
-      <div class="q" data-reveal style="--r:-.5deg;--dl:.24s"><span class="qq">¿Y si no se junta lo necesario?</span><div class="qa"><span data-icon="check" data-size="22" data-sw="3"></span> Se devuelve el 100% a cada persona.</div></div>
+      <div class="q" data-reveal><span class="qq">¿De verdad existe el diagnóstico?</span><span class="qa"><span data-icon="check" data-size="16" data-sw="3"></span> Lo confirmamos con el médico tratante.</span></div>
+      <div class="q" data-reveal style="--dl:.1s"><span class="qq">¿Quién se queda con la plata?</span><span class="qa"><span data-icon="check" data-size="16" data-sw="3"></span> Nadie: va directo a la clínica.</span></div>
+      <div class="q" data-reveal style="--dl:.2s"><span class="qq">¿Y si no se junta lo necesario?</span><span class="qa"><span data-icon="check" data-size="16" data-sw="3"></span> Se devuelve todo, a cada persona.</span></div>
     </div>
   </div>
 </section>
 
 <section class="sec how" id="como">
-  <div class="tear p2" style="top:-1px;bottom:auto;transform:scaleY(-1);background-image:radial-gradient(circle at 14px 26px, var(--paper) 13px, transparent 14px)"></div>
   <div class="wrap">
-    <div data-reveal>
-      <span class="kicker eyebrow"><i></i> Cómo funciona</span>
-      <h2 class="h2 display">Cuatro pasos, <em>cero chamullo.</em></h2>
-      <p class="sub">La comunidad organiza como siempre. Nosotros ponemos lo que faltaba: verificación, cobro seguro y transparencia.</p>
+    <div class="center" data-reveal>
+      <span class="eyebrow">Cómo funciona</span>
+      <h2 class="h-l">Simple para todos.<br><span class="warm">Seguro para cada causa.</span></h2>
     </div>
     <div class="steps-l">
-      <article class="st ticket c1" data-reveal><span class="n">01</span><h3>La comunidad postula</h3><p>Una junta de vecinos, club o centro de padres postula el caso con el diagnóstico y el presupuesto de la clínica.</p></article>
-      <article class="st ticket c2" data-reveal style="--dl:.1s"><span class="n">02</span><h3>Verificamos todo</h3><p>Identidad, médico, clínica, organización y una videollamada con la familia. Recién ahí la rifa recibe el sello.</p></article>
-      <article class="st ticket c3" data-reveal style="--dl:.2s"><span class="n">03</span><h3>Compras tus números</h3><p>Eliges tus números en la app y pagas con Webpay, Mercado Pago o transferencia. Tus tickets quedan en el teléfono.</p></article>
-      <article class="st ticket c4" data-reveal style="--dl:.3s"><span class="n">04</span><h3>Se cumple o se devuelve</h3><p>Si se llega a la meta, pagamos a la clínica y se sortea el premio. Si no, se devuelve el 100% automáticamente.</p></article>
+      <article class="st" data-reveal><span class="n">1</span><span class="st-ic" data-icon="people"></span><h3>La comunidad postula</h3><p>Una junta de vecinos, club o centro de padres postula el caso con el diagnóstico y el presupuesto.</p></article>
+      <article class="st" data-reveal style="--dl:.08s"><span class="n">2</span><span class="st-ic" data-icon="shield"></span><h3>Verificamos todo</h3><p>Identidad, médico, clínica, organización y una videollamada con la familia.</p></article>
+      <article class="st" data-reveal style="--dl:.16s"><span class="n">3</span><span class="st-ic" data-icon="ticket"></span><h3>Compras tus números</h3><p>Eliges, pagas con Webpay, Mercado Pago o transferencia y tus tickets quedan en tu teléfono.</p></article>
+      <article class="st" data-reveal style="--dl:.24s"><span class="n">4</span><span class="st-ic" data-icon="heart"></span><h3>Se cumple o se devuelve</h3><p>Si se llega a la meta, pagamos a la clínica y se sortea el premio. Si no, se devuelve todo.</p></article>
     </div>
   </div>
-  <div class="tear i"></div>
 </section>
 
-<section class="sec seal-sec" id="sello">
-  <div class="wrap">
-    <div class="big-stamp" data-reveal><span class="spin-ring"></span><span class="stamp" data-stamp data-thunk-view></span></div>
-    <div>
-      <div data-reveal>
-        <span class="kicker eyebrow" style="color:var(--yellow)"><i></i> El sello unamano</span>
-        <h2 class="h2 display">No confíes en nosotros. <em>Compruébalo.</em></h2>
-        <p class="sub">Cada rifa muestra qué se revisó, con qué fuente y a quién se le paga. Y el sorteo lo puedes recalcular tú mismo desde el teléfono.</p>
-      </div>
-      <ul class="seal-list">
-        <li data-reveal><span class="ic" data-icon="id"></span><div><b>Identidad</b><span>Cédula del beneficiario validada con el Registro Civil.</span></div></li>
-        <li data-reveal style="--dl:.06s"><span class="ic" data-icon="steth"></span><div><b>Médico tratante</b><span>Inscrito en el Registro Nacional de Prestadores Individuales de Salud.</span></div></li>
-        <li data-reveal style="--dl:.12s"><span class="ic" data-icon="clinic"></span><div><b>Presupuesto real</b><span>Confirmado llamando a la clínica a su número oficial.</span></div></li>
-        <li data-reveal style="--dl:.18s"><span class="ic" data-icon="people"></span><div><b>Organización</b><span>Personalidad jurídica vigente y directiva identificada.</span></div></li>
-        <li data-reveal style="--dl:.24s"><span class="ic" data-icon="video"></span><div><b>Videollamada</b><span>Conversamos con la familia antes de publicar.</span></div></li>
-        <li data-reveal style="--dl:.3s"><span class="ic" data-icon="hash"></span><div><b>Sorteo auditable</b><span>La huella de la semilla se publica antes de vender el primer número.</span></div></li>
+<section class="sec trust-sec" id="confianza">
+  <div class="wrap two">
+    <div data-reveal>
+      <span class="eyebrow">El sello unamano</span>
+      <h2 class="h-l">No te pedimos que confíes. <span class="warm">Te mostramos.</span></h2>
+      <p class="sub">Cada rifa muestra qué revisamos, con qué fuente y a quién se le paga. Y el sorteo lo puedes recalcular tú mismo desde el teléfono.</p>
+      <ul class="tlist">
+        <li><span data-icon="id"></span><div><b>Identidad</b><span>Cédula del beneficiario validada con el Registro Civil.</span></div></li>
+        <li><span data-icon="steth"></span><div><b>Médico tratante</b><span>Inscrito en el Registro Nacional de Prestadores Individuales de Salud.</span></div></li>
+        <li><span data-icon="clinic"></span><div><b>Presupuesto real</b><span>Confirmado llamando a la clínica a su número oficial.</span></div></li>
+        <li><span data-icon="people"></span><div><b>Organización</b><span>Personalidad jurídica vigente y directiva identificada.</span></div></li>
+        <li><span data-icon="video"></span><div><b>Videollamada</b><span>Conversamos con la familia antes de publicar.</span></div></li>
       </ul>
     </div>
+    <div class="vcard" data-reveal>
+      <div class="vcard-h"><span data-seal></span><div><b>Causa verificada</b><span>Una cadera nueva para Rosa</span></div></div>
+      <ul>
+        <li><i data-icon="check" data-size="14" data-sw="3"></i>Identidad de Rosa<em>Registro Civil</em></li>
+        <li><i data-icon="check" data-size="14" data-sw="3"></i>Dr. tratante, traumatología<em>Registro de prestadores</em></li>
+        <li><i data-icon="check" data-size="14" data-sw="3"></i>Presupuesto $3.600.000<em>Llamada a la clínica</em></li>
+        <li><i data-icon="check" data-size="14" data-sw="3"></i>Junta de Vecinos Villa Los Aromos<em>Personalidad jurídica</em></li>
+        <li><i data-icon="check" data-size="14" data-sw="3"></i>Entrevista con Rosa y su hija<em>Videollamada</em></li>
+      </ul>
+      <div class="vcard-hash"><span data-icon="hash" data-size="16"></span><span>Huella del sorteo publicada: <code>9f3a7c21e04b…</code></span></div>
+    </div>
   </div>
-  <div class="tear"></div>
 </section>
 
 <section class="sec money">
   <div class="wrap">
-    <div data-reveal>
-      <span class="kicker eyebrow"><i></i> A dónde va tu plata</span>
-      <h2 class="h2 display">De cada <em>$1.000</em> que pones…</h2>
+    <div class="center" data-reveal>
+      <span class="eyebrow">Transparencia total</span>
+      <h2 class="h-l">De cada $1.000 que pones…</h2>
     </div>
     <div class="mbar" id="mbar" role="img" aria-label="80% tratamiento, 12% premio, 8% verificación y operación">
-      <div data-w="80" style="background:var(--green)"><b>$800</b><span>TRATAMIENTO</span></div>
-      <div data-w="12" class="sm" style="background:var(--yellow)"><b>$120</b><span>PREMIO</span></div>
-      <div data-w="8" class="sm" style="background:var(--pink)"><b>$80</b><span>EQUIPO</span></div>
+      <div data-w="80" class="m1"><b>$800</b><span>van al tratamiento</span></div>
+      <div data-w="12" class="m2"><b>$120</b><span>premio</span></div>
+      <div data-w="8" class="m3"><b>$80</b><span>equipo</span></div>
     </div>
     <div class="money-legend">
-      <div data-reveal><b>Directo a la clínica</b><span>Se paga al prestador contra factura. Nunca a la familia ni a quien organiza.</span></div>
-      <div data-reveal style="--dl:.1s"><b>El premio</b><span>Si alguien lo dona, esa parte también va al tratamiento.</span></div>
-      <div data-reveal style="--dl:.2s"><b>Quienes verifican</b><span>Financia al equipo que revisa cada caso, los pagos y la plataforma.</span></div>
+      <div data-reveal><i class="m1"></i><b>Directo a la clínica</b><span>Se paga al prestador contra factura. Nunca a la familia ni a quien organiza.</span></div>
+      <div data-reveal style="--dl:.1s"><i class="m2"></i><b>El premio</b><span>Si alguien lo dona, esa parte también va al tratamiento.</span></div>
+      <div data-reveal style="--dl:.2s"><i class="m3"></i><b>Quienes verifican</b><span>Financia al equipo que revisa cada caso, los pagos y la plataforma.</span></div>
     </div>
   </div>
 </section>
 
 <section class="sec causes" id="causas">
-  <div class="tear p2" style="top:-26px;bottom:auto"></div>
   <div class="wrap">
     <div class="causes-head" data-reveal>
-      <div><span class="kicker eyebrow"><i></i> Ahora mismo</span><h2 class="h2 display">Causas que hoy necesitan <em style="color:var(--red)">una mano.</em></h2></div>
-      <a class="btn" href="app/">Ver todas en la app <span data-icon="arrow"></span></a>
+      <div><span class="eyebrow">Ahora mismo</span><h2 class="h-l">Causas que hoy necesitan <span class="warm">una mano.</span></h2></div>
+      <a class="btn btn-light" href="app/">Ver todas <span data-icon="arrow" data-size="18"></span></a>
     </div>
     <div class="cgrid" id="cgrid"></div>
-    <p style="margin:26px 0 0;font-size:13px;color:var(--ink-3)">Versión de demostración: estas causas son de ejemplo.</p>
+    <p class="demo-note">Versión de demostración: las causas y las fotos son de ejemplo.</p>
   </div>
 </section>
 
 <section class="sec orgs" id="organizaciones">
-  <div class="wrap">
+  <div class="wrap two">
+    <div class="orgs-photo ph" data-photo="https://images.unsplash.com/photo-1730875648117-ff32ae9b98c3" data-fb="+" data-reveal></div>
     <div data-reveal>
-      <span class="kicker eyebrow"><i></i> Para organizaciones</span>
-      <h2 class="h2 display">Ustedes organizan. <em>Nosotros respaldamos.</em></h2>
-      <p class="sub">Las rifas benéficas las hacen organizaciones con personalidad jurídica a favor de otra persona. Les damos la plataforma para hacerlo bien y que la gente confíe.</p>
-      <div class="org-chips">
-        <span style="--r:-2deg">Juntas de vecinos</span><span style="--r:1deg">Centros de padres</span><span style="--r:-1deg">Clubes deportivos</span><span style="--r:2deg">Clubes de adulto mayor</span><span style="--r:-1.5deg">Sindicatos</span>
+      <span class="eyebrow">Para organizaciones</span>
+      <h2 class="h-l">Ustedes organizan. <span class="warm">Nosotros respaldamos.</span></h2>
+      <p class="sub">Las rifas benéficas las hacen organizaciones con personalidad jurídica a favor de otra persona. Les damos todo para hacerlo bien y que la gente confíe.</p>
+      <div class="deal">
+        <div><b>La organización</b><ul><li>Postula el caso</li><li>Consigue el premio</li><li>Difunde en su comunidad</li></ul></div>
+        <div><b>unamano</b><ul><li>Verifica médico, clínica e identidad</li><li>Cobra y paga a la clínica</li><li>Publica el resultado y los comprobantes</li></ul></div>
       </div>
-    </div>
-    <div class="deal" data-reveal>
-      <div class="deal-row deal-head"><div>La organización</div><div>unamano</div></div>
-      <div class="deal-row"><div>Postula el caso y consigue el premio</div><div>Verifica médico, clínica e identidad</div></div>
-      <div class="deal-row"><div>Difunde en su comunidad</div><div>Cobra, guarda y paga a la clínica</div></div>
-      <div class="deal-row"><div>Rinde cuentas a sus socios</div><div>Entrega comprobantes y resultado público</div></div>
-      <a class="btn btn-blue btn-block" href="app/#/postular"><span data-icon="hand"></span> Postular una causa</a>
+      <div class="org-tags"><span>Juntas de vecinos</span><span>Centros de padres</span><span>Clubes deportivos</span><span>Clubes de adulto mayor</span><span>Sindicatos</span></div>
+      <a class="btn btn-l" href="app/#/postular">Postular una causa <span data-icon="arrow" data-size="18"></span></a>
     </div>
   </div>
 </section>
 
 <section class="sec install">
-  <div class="wrap">
+  <div class="wrap two">
     <div data-reveal>
-      <span class="kicker eyebrow" style="color:var(--yellow)"><i></i> Llévala en el bolsillo</span>
-      <h2 class="h2 display">Sin App Store. <em>Sin descargas.</em></h2>
+      <span class="eyebrow">Llévala en el bolsillo</span>
+      <h2 class="h-l">Sin App Store. <span class="warm">Sin descargas.</span></h2>
       <p class="sub">unamano se instala desde el navegador y queda en tu pantalla de inicio como cualquier app. Tus números quedan guardados en tu teléfono.</p>
-      <div class="hero-ctas"><button class="btn btn-yellow" id="installBtn" type="button"><span data-icon="download"></span> Instalar unamano</button><a class="btn btn-paper" href="app/">Abrir en el navegador</a></div>
+      <div class="ctas"><button class="btn btn-sun btn-l" id="installBtn" type="button"><span data-icon="download"></span> Instalar unamano</button><a class="btn btn-l btn-light" href="app/">Abrir en el navegador</a></div>
       <div class="os">
         <div><b>iPhone</b><ol><li>Abre unamano en Safari</li><li>Toca Compartir</li><li>«Agregar a pantalla de inicio»</li></ol></div>
         <div><b>Android</b><ol><li>Abre unamano en Chrome</li><li>Toca «Instalar app»</li><li>Confirma y listo</li></ol></div>
@@ -196,39 +195,39 @@
     </div>
     <div class="phone" data-reveal><iframe src="app/" title="Vista previa de la app unamano" loading="lazy"></iframe></div>
   </div>
-  <div class="tear"></div>
 </section>
 
 <section class="sec faq" id="preguntas">
-  <div class="wrap">
+  <div class="wrap two">
     <div data-reveal>
-      <span class="kicker eyebrow"><i></i> Preguntas</span>
-      <h2 class="h2 display">Lo que todos <em style="color:var(--blue)">preguntan.</em></h2>
+      <span class="eyebrow">Preguntas frecuentes</span>
+      <h2 class="h-l">Lo que todos <span class="warm">preguntan.</span></h2>
+      <p class="sub">Si te queda alguna duda, aquí están las respuestas a lo que más nos preguntan.</p>
     </div>
     <div>
-      <details><summary>¿Quién organiza la rifa? <span class="pm" data-icon="plus"></span></summary><p>Siempre una organización con personalidad jurídica, como una junta de vecinos, un centro de padres, un club o un sindicato, con fines benéficos y a favor de otra persona. unamano pone la tecnología, la verificación y el pago a la clínica.</p></details>
-      <details><summary>¿Qué pasa si no se llega a la meta? <span class="pm" data-icon="plus"></span></summary><p>No hay sorteo y se devuelve el 100% de cada compra al mismo medio de pago. La meta se calcula para que el tratamiento quede cubierto completo.</p></details>
-      <details><summary>¿Cómo sé que el sorteo no está arreglado? <span class="pm" data-icon="plus"></span></summary><p>Antes de vender el primer número publicamos la huella (hash SHA-256) de una semilla secreta. El día del sorteo revelamos la semilla y el ganador sale de una fórmula pública. Cualquiera puede recalcularlo desde la app y comprobar que la semilla no cambió.</p></details>
-      <details><summary>¿Quién pone el premio? <span class="pm" data-icon="plus"></span></summary><p>Hay dos opciones y cada rifa dice cuál usa: alguien lo dona (y verificamos que exista), o se compra con un porcentaje de lo recaudado, que se informa antes de comprar.</p></details>
-      <details><summary>¿Cuánto cobra unamano? <span class="pm" data-icon="plus"></span></summary><p>Postular es gratis. De lo recaudado, un 8% financia la verificación de casos, los pagos y la plataforma. El reparto completo aparece en cada rifa.</p></details>
-      <details><summary>¿Qué hacen con los datos de salud? <span class="pm" data-icon="plus"></span></summary><p>Son datos sensibles. Los usamos solo para verificar la causa, con autorización expresa, y no se publican sin permiso de la familia.</p></details>
+      <details><summary>¿Quién organiza la rifa? <span class="pm" data-icon="plus" data-size="18"></span></summary><p>Siempre una organización con personalidad jurídica, como una junta de vecinos, un centro de padres, un club o un sindicato, con fines benéficos y a favor de otra persona. unamano pone la tecnología, la verificación y el pago a la clínica.</p></details>
+      <details><summary>¿Qué pasa si no se llega a la meta? <span class="pm" data-icon="plus" data-size="18"></span></summary><p>No hay sorteo y se devuelve el 100% de cada compra al mismo medio de pago. La meta se calcula para que el tratamiento quede cubierto completo.</p></details>
+      <details><summary>¿Cómo sé que el sorteo no está arreglado? <span class="pm" data-icon="plus" data-size="18"></span></summary><p>Antes de vender el primer número publicamos la huella (hash SHA-256) de una semilla secreta. El día del sorteo revelamos la semilla y el ganador sale de una fórmula pública. Cualquiera puede recalcularlo desde la app.</p></details>
+      <details><summary>¿Quién pone el premio? <span class="pm" data-icon="plus" data-size="18"></span></summary><p>Hay dos opciones y cada rifa dice cuál usa: alguien lo dona (y verificamos que exista), o se compra con un porcentaje de lo recaudado, que se informa antes de comprar.</p></details>
+      <details><summary>¿Cuánto cobra unamano? <span class="pm" data-icon="plus" data-size="18"></span></summary><p>Postular es gratis. De lo recaudado, un 8% financia la verificación de casos, los pagos y la plataforma. El reparto completo aparece en cada rifa.</p></details>
+      <details><summary>¿Qué hacen con los datos de salud? <span class="pm" data-icon="plus" data-size="18"></span></summary><p>Son datos sensibles. Los usamos solo para verificar la causa, con autorización expresa, y no se publican sin permiso de la familia.</p></details>
     </div>
   </div>
 </section>
 
-<section class="sec final">
-  <div class="tear i" style="top:-1px;bottom:auto;transform:scaleY(-1);background-image:radial-gradient(circle at 14px 26px, var(--paper) 13px, transparent 14px)"></div>
+<section class="final">
   <div class="wrap" data-reveal>
-    <h2 class="h2 display">Echa <em>una mano.</em><br>Hoy.</h2>
-    <div class="hero-ctas" style="margin-top:40px"><a class="btn btn-yellow" href="app/"><span data-icon="ticket"></span> Ver causas activas</a><a class="btn btn-paper" href="app/#/postular">Postular una causa</a></div>
+    <h2 class="h-xl">Echa una mano.<br><span class="warm">Hoy.</span></h2>
+    <p>Un número puede ser la diferencia entre esperar dos años o operarse este mes.</p>
+    <div class="ctas"><a class="btn btn-sun btn-l" href="app/"><span data-icon="heart"></span> Ver causas activas</a><a class="btn btn-l btn-ghost-w" href="app/#/postular">Postular una causa</a></div>
   </div>
 </section>
 </main>
 
 <footer class="foot">
   <div class="wrap">
-    <div><a href="#" style="display:flex;align-items:center;gap:8px"><span data-logo="34"></span><span data-wordmark="24" data-color="#fff"></span></a>
-      <p>Rifas solidarias con causa verificada. Versión MVP de demostración: causas y pagos de ejemplo.</p></div>
+    <div><a href="#" class="brand"><span data-logo="32"></span><span data-wordmark="22"></span></a>
+      <p>Rifas solidarias con causa verificada. Versión MVP de demostración: causas, fotos y pagos de ejemplo.</p></div>
     <nav aria-label="Pie de página"><a href="app/">App</a><a href="app/#/postular">Postular</a><a href="admin/">Panel de administración</a><a href="#preguntas">Preguntas</a></nav>
   </div>
 </footer>

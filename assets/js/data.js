@@ -4,7 +4,7 @@
 
 import { sha256, randomSeed, pickWinner, prng } from './crypto.js';
 
-const KEY = 'unamano:v1';
+const KEY = 'unamano:v2';
 const DAY = 86_400_000;
 export const OPS_PCT = 8; // % para verificación y operación de la plataforma
 
@@ -44,7 +44,7 @@ export function computePlan({ budget, price, prizeMode, prizePct }) {
 function causeSeed(t) {
   const base = [
     {
-      id: 'rosa-cadera', status: 'live', category: 'cirugia', palette: 0,
+      id: 'rosa-cadera', photo: 'https://images.unsplash.com/photo-1758686253896-e6c76b6f7aa1', status: 'live', category: 'cirugia', palette: 0,
       title: 'Una cadera nueva para Rosa',
       treatment: 'Cirugía de reemplazo total de cadera',
       beneficiary: { name: 'Rosa Muñoz', first: 'Rosa', age: 68, comuna: 'Maipú' },
@@ -56,7 +56,7 @@ function causeSeed(t) {
       drawIn: 6, soldSeed: 1560, checksAll: true,
     },
     {
-      id: 'tomas-onco', status: 'live', category: 'medicamentos', palette: 1,
+      id: 'tomas-onco', photo: 'https://images.unsplash.com/photo-1611146033545-5e1e5ad951d8', status: 'live', category: 'medicamentos', palette: 1,
       title: 'Que a Tomás no le falte ningún ciclo',
       treatment: 'Medicamentos oncológicos fuera de cobertura',
       beneficiary: { name: 'Tomás Herrera', first: 'Tomás', age: 7, comuna: 'Puente Alto' },
@@ -68,7 +68,7 @@ function causeSeed(t) {
       drawIn: 1.2, soldSeed: 2380, checksAll: true,
     },
     {
-      id: 'josefa-coclear', status: 'live', category: 'ayuda', palette: 2,
+      id: 'josefa-coclear', photo: 'https://images.unsplash.com/flagged/photo-1553178298-251410cb176f', status: 'live', category: 'ayuda', palette: 2,
       title: 'Para que Josefa escuche el mar',
       treatment: 'Implante coclear y rehabilitación auditiva',
       beneficiary: { name: 'Josefa Cayupán', first: 'Josefa', age: 4, comuna: 'Temuco' },
@@ -80,7 +80,7 @@ function causeSeed(t) {
       drawIn: 3, soldSeed: 2340, checksAll: true,
     },
     {
-      id: 'luis-rodilla', status: 'live', category: 'cirugia', palette: 3,
+      id: 'luis-rodilla', photo: 'https://images.unsplash.com/photo-1658314755819-72c38b317e61', status: 'live', category: 'cirugia', palette: 3,
       title: 'Don Luis quiere volver a bailar cueca',
       treatment: 'Prótesis de rodilla',
       beneficiary: { name: 'Luis Contreras', first: 'Luis', age: 74, comuna: 'Valparaíso' },
@@ -92,7 +92,7 @@ function causeSeed(t) {
       drawIn: 14, soldSeed: 900, checksAll: true,
     },
     {
-      id: 'benja-silla', status: 'drawn', category: 'ayuda', palette: 4,
+      id: 'benja-silla', photo: 'https://images.unsplash.com/photo-1701362564317-a3c2b9079923', status: 'drawn', category: 'ayuda', palette: 4,
       title: 'Una silla a la medida para Benja',
       treatment: 'Silla de ruedas postural pediátrica',
       beneficiary: { name: 'Benjamín Soto', first: 'Benja', age: 11, comuna: 'Antofagasta' },
@@ -104,7 +104,7 @@ function causeSeed(t) {
       drawIn: -5, soldSeed: 1720, checksAll: true,
     },
     {
-      id: 'martina-cardio', status: 'pending', category: 'cirugia', palette: 1,
+      id: 'martina-cardio', photo: 'https://images.unsplash.com/photo-1658064335884-45f1f16927f3', status: 'pending', category: 'cirugia', palette: 1,
       title: 'Un corazón fuerte para Martina',
       treatment: 'Cirugía cardiaca congénita',
       beneficiary: { name: 'Martina Vega', first: 'Martina', age: 2, comuna: 'Rancagua' },
@@ -117,7 +117,7 @@ function causeSeed(t) {
       flags: ['La firma del informe médico no calza con la firma registrada del profesional. Revisar antes de aprobar.'],
     },
     {
-      id: 'carmen-dental', status: 'pending', category: 'tratamiento', palette: 2,
+      id: 'carmen-dental', photo: 'https://images.unsplash.com/photo-1749189516333-168cfd97de0b', status: 'pending', category: 'tratamiento', palette: 2,
       title: 'La sonrisa de la señora Carmen',
       treatment: 'Rehabilitación oral completa',
       beneficiary: { name: 'Carmen Rivas', first: 'Carmen', age: 61, comuna: 'Concepción' },
@@ -152,7 +152,7 @@ const soldCache = new Map();
 
 function fresh() {
   const t = Date.now();
-  const s = { v: 1, createdAt: t, causes: causeSeed(t), purchases: [], profile: {}, adminOk: false };
+  const s = { v: 2, createdAt: t, causes: causeSeed(t), purchases: [], profile: {}, adminOk: false };
   // El caso de Benja ya se sorteó: generamos su resultado de forma real.
   const benja = s.causes.find(c => c.id === 'benja-silla');
   state = s;
@@ -166,7 +166,7 @@ export function load() {
     const raw = localStorage.getItem(KEY);
     state = raw ? JSON.parse(raw) : null;
   } catch { state = null; }
-  if (!state || state.v !== 1) { state = fresh(); save(); }
+  if (!state || state.v !== 2) { state = fresh(); save(); }
   return state;
 }
 

@@ -43,20 +43,19 @@ export function icon(name, size = 22, sw = 2) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${P[name] || ''}</svg>`;
 }
 
-// Logo: ticket troquelado con un corazón calado.
-export function logo(size = 36, { bg = '#FFCF1F', fg = '#16150F', heart = '#FF4A2D' } = {}) {
+// Logo: ticket verde con corazón; el corazón lleva un punto de sol.
+export function logo(size = 36) {
   const id = 'lg' + Math.random().toString(36).slice(2, 7);
   return `<svg width="${size}" height="${size}" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-    <defs><mask id="${id}"><rect width="48" height="48" fill="#fff"/><circle cx="4" cy="24" r="5.5" fill="#000"/><circle cx="44" cy="24" r="5.5" fill="#000"/></mask></defs>
-    <g transform="rotate(-8 24 24)">
-      <rect x="4" y="9" width="40" height="30" rx="7" fill="${bg}" stroke="${fg}" stroke-width="2.4" mask="url(#${id})"/>
-      <path d="M24 33.5s-8.4-4.9-8.4-10.6a4.5 4.5 0 0 1 8.4-2.3 4.5 4.5 0 0 1 8.4 2.3c0 5.7-8.4 10.6-8.4 10.6z" fill="${heart}" stroke="${fg}" stroke-width="2.2" stroke-linejoin="round"/>
-    </g>
+    <defs><mask id="${id}"><rect width="48" height="48" fill="#fff"/><circle cx="2" cy="24" r="5" fill="#000"/><circle cx="46" cy="24" r="5" fill="#000"/></mask></defs>
+    <rect x="2" y="6" width="44" height="36" rx="11" fill="#0E7A5F" mask="url(#${id})"/>
+    <path d="M24 34.5s-9-5.2-9-11.3a4.8 4.8 0 0 1 9-2.4 4.8 4.8 0 0 1 9 2.4c0 6.1-9 11.3-9 11.3z" fill="#fff"/>
+    <circle cx="35.5" cy="13.5" r="3.6" fill="#FFC845"/>
   </svg>`;
 }
 
-export function wordmark(size = 24, color = 'currentColor') {
-  return `<span class="wordmark" style="font-family:var(--f-display);font-weight:900;font-variation-settings:'SOFT' 100,'WONK' 1,'opsz' 72;font-size:${size}px;letter-spacing:-.04em;color:${color};line-height:1">una<em style="font-style:italic">mano</em></span>`;
+export function wordmark(size = 22, color = 'currentColor') {
+  return `<span class="wordmark" style="font-family:var(--f-sans);font-weight:800;font-size:${size}px;letter-spacing:-.045em;color:${color};line-height:1">una<span style="color:var(--brand)">mano</span></span>`;
 }
 
 // Timbre de goma con borde irregular. Texto en arco arriba y abajo.

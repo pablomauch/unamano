@@ -8,8 +8,8 @@
   "id": "./app/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#2F3BFF",
-  "theme_color": "#2F3BFF",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0E7A5F",
   "categories": ["lifestyle", "social", "finance"],
   "icons": [
     { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
