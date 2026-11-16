@@ -635,3 +635,10 @@ body.story-mode .shell { background: #000; box-shadow: none; }
 .kit2-b p { margin: 0; color: #5A4300; font-size: .9375rem; }
 .kit2-b code { font-size: .75rem; word-break: break-all; background: #fff; padding: .5rem .6rem; border-radius: .6rem; }
 .kit2-a { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .25rem; }
+.sv-top-r { display: flex; gap: .5rem; }
+.sv-next { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; position: relative; z-index: 4; }
+.sv-link { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.75rem; padding: 0 1rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.1); color: #fff; font-weight: 700; font-size: .9375rem; text-decoration: none; backdrop-filter: blur(6px); }
+.sv-note a { color: #fff; font-weight: 700; }
+.sv-slides { z-index: 4; pointer-events: none; }
+.sv-next { pointer-events: auto; }
+.sv-org { flex: 1; } .sv-org > div { min-width: 0; }

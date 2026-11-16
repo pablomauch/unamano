@@ -402,7 +402,7 @@ function viewStory(id) {
       <div class="sv-bars" aria-hidden="true">${Array.from({ length: SLIDES }, () => '<i><b></b></i>').join('')}</div>
       <header class="sv-top">
         <div class="sv-org"><span class="sv-logo">${logo(30)}</span><div><b>${esc(c.organizer.name)}</b><small>${icon('shield', 13, 2.6)} Verificada por unamano</small></div></div>
-        <button class="sv-ic" data-share aria-label="Compartir">${icon('share', 22)}</button>
+        <div class="sv-top-r"><button class="sv-ic" data-share aria-label="Compartir">${icon('share', 22)}</button><button class="sv-ic" data-sv-menu aria-label="Más opciones">${icon('more', 22)}</button></div>
       </header>
       <div class="sv-slides" aria-live="polite">
         <article class="sv-s">
@@ -429,6 +429,10 @@ function viewStory(id) {
             <li>${icon('clinic', 22, 2.2)}<span>El dinero va directo a ${esc(c.provider.name)}, no a una persona.</span></li>
             <li>${icon('refresh', 22, 2.2)}<span>Si no se llega a la meta, te devolvemos todo.</span></li>
           </ul>
+          <div class="sv-next">
+            <a class="sv-link" href="#/causa/${c.id}">${icon('doc', 18)} Ver toda la información</a>
+            <button class="sv-link" data-replay>${icon('refresh', 18)} Ver de nuevo</button>
+          </div>
         </article>
       </div>
       <button class="sv-tap prev" aria-label="Anterior"></button>
@@ -437,7 +441,7 @@ function viewStory(id) {
         <div class="sv-progress"><div class="sv-bar sm"><i style="width:${Math.max(3, st.pct)}%"></i></div><span><b class="num">${Math.floor(st.pct)}%</b> de la meta · quedan ${db.timeLeft(st.ms)}</span></div>
         <div class="sv-amts" role="group" aria-label="Monto del aporte">${AMOUNTS.map(a => `<button type="button" data-a="${a}" aria-pressed="${a === amount}">${clp(a)}</button>`).join('')}</div>
         <button class="btn btn-sun btn-l btn-block" id="give">${icon('heart', 22, 2.4)} <span id="giveTxt"></span></button>
-        <p class="sv-note">Cada $1.000 es un número para el sorteo: ${esc(c.prize)}.</p>
+        <p class="sv-note">Cada $1.000 es un número para el sorteo: ${esc(c.prize)}. <a href="#/causa/${c.id}">Más sobre esta causa</a></p>
       </div>
     </section>`;
   const slides = $$('.sv-s'), bars = $$('.sv-bars b');
@@ -458,6 +462,27 @@ function viewStory(id) {
   $('.sv-tap.prev').addEventListener('click', () => show(slide - 1));
   $$('.sv-amts button').forEach(b => b.addEventListener('click', () => setAmt(+b.dataset.a)));
   $('[data-share]').addEventListener('click', () => shareLink(c));
+  $('[data-replay]').addEventListener('click', e => { e.stopPropagation(); show(0); });
+  $('[data-sv-menu]').addEventListener('click', () => {
+    paused = true; clearTimeout(timer);
+    sheet(`<h2>¿Qué quieres hacer?</h2>
+      <ul class="menu">
+        <li><a href="#/causa/${c.id}" data-go><span class="mi">${icon('doc')}</span><span>Toda la información de esta causa<small>Historia completa, verificaciones y a dónde va el dinero</small></span></a></li>
+        <li><a href="#/mis-numeros" data-go><span class="mi">${icon('ticket')}</span><span>Mis números<small>Tus aportes y la fecha de cada sorteo</small></span></a></li>
+        <li><a href="#/causas" data-go><span class="mi">${icon('heart')}</span><span>Otras causas<small>Personas y comunidades que también buscan apoyo</small></span></a></li>
+        <li><a href="#/impacto" data-go><span class="mi">${icon('chart')}</span><span>Lo que hemos logrado<small>El impacto de todas las causas</small></span></a></li>
+        <li><a href="#/postular" data-go><span class="mi">${icon('hand')}</span><span>Postular una causa<small>Para organizaciones de la comunidad</small></span></a></li>
+        <li><button data-bigtext><span class="mi">${icon('textsize')}</span><span>Cambiar tamaño de letra<small>Normal, grande o muy grande</small></span></button></li>
+      </ul>`, {
+      onOpen: (sh, close) => {
+        $$('[data-go]', sh).forEach(a => a.addEventListener('click', () => setTimeout(close, 0)));
+        $('[data-bigtext]', sh).addEventListener('click', () => { const cur = db.prefs().size || 'm'; const nx = SIZES[(SIZES.indexOf(cur) + 1) % SIZES.length]; db.setPref('size', nx); applySize(); toast(nx === 'm' ? 'Letra normal' : nx === 'l' ? 'Letra grande' : 'Letra muy grande'); });
+      },
+    });
+    const root = $('#sheet-root');
+    const obs = new MutationObserver(() => { if (!root.children.length) { obs.disconnect(); paused = false; if (location.hash.startsWith('#/h/')) show(slide); } });
+    obs.observe(root, { childList: true });
+  });
   $('#give').addEventListener('click', () => { paused = true; clearTimeout(timer); giveSheet(c, amount, () => { paused = false; show(slide); }); });
 }
 
